@@ -14,7 +14,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: Set up Python
+    - name: Set up Python 3.11
       uses: actions/setup-python@v4
       with:
         python-version: 3.11
@@ -23,17 +23,16 @@ jobs:
       run: |
         sudo apt update
         sudo apt install -y \
-          python3.11 python3.11-venv python3.11-dev python3-pip python3-setuptools \
           build-essential ccache libffi-dev libssl-dev git zip unzip \
           openjdk-17-jdk libsqlite3-dev zlib1g-dev
 
     - name: Upgrade pip and install Python tools
       run: |
-        python3.11 -m pip install --upgrade pip cython virtualenv
+        python -m pip install --upgrade pip cython virtualenv
 
     - name: Create Python virtual environment
       run: |
-        python3.11 -m venv venv
+        python -m venv venv
         source venv/bin/activate
         pip install --upgrade pip setuptools wheel
 
