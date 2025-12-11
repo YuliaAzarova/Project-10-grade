@@ -41,6 +41,11 @@ jobs:
         source venv/bin/activate
         pip install -r requirements.txt
 
+    - name: Install Android Build-Tools
+      run: |
+        ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin/sdkmanager "build-tools;36.1.0" || true
+
+
     - name: Accept Android SDK licenses
       run: |
         yes | ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses || true
