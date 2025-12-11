@@ -3,6 +3,7 @@
 title = Sort Visualizer
 package.name = sortvisualizer
 package.domain = org.example
+version = 1.0
 source.dir = .
 source.include_exts = py,png,jpg,kv,txt
 requirements = python3,kivy,kivy_garden,kivy_garden.graph
@@ -26,4 +27,3 @@ p4a.branch = master
 
 log_level = 2
 warn_on_root = 1
-version = 1.0
