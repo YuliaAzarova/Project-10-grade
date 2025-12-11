@@ -63,5 +63,3 @@ jobs:
       run: |
         source venv/bin/activate
         buildozer -v android debug
-
-    buildozer -v android debug
