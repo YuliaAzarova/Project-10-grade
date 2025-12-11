@@ -11,8 +11,8 @@ jobs:
     runs-on: ubuntu-24.04
 
     env:
-      ANDROID_HOME: ${{ runner.home }}/.buildozer/android/platform/android-sdk
-      PATH: ${{ runner.home }}/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin:$PATH
+      ANDROID_HOME: $HOME/.buildozer/android/platform/android-sdk
+      PATH: $HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin:$PATH
 
     steps:
     - name: Checkout repository
@@ -49,13 +49,11 @@ jobs:
       run: |
         mkdir -p $ANDROID_HOME/cmdline-tools
         cd $ANDROID_HOME/cmdline-tools
-        # Скачиваем cmdline-tools если их нет
         if [ ! -d "latest" ]; then
           curl -o commandlinetools.zip https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
           unzip commandlinetools.zip
           mv cmdline-tools latest
         fi
-        # Принимаем лицензии и устанавливаем необходимые компоненты
         yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
         $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platform-tools" "platforms;android-33" "build-tools;36.1.0"
 
