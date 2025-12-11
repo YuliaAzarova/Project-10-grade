@@ -40,6 +40,9 @@ jobs:
       run: |
         source venv/bin/activate
         pip install -r requirements.txt
+
+    - name: Accept Android SDK licenses
+      run: yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
         
     - name: Build APK with Buildozer
       run: |
