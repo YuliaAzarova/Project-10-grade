@@ -1,0 +1,20 @@
+[app]
+title = Конвертер валют
+package.name = currencyconverter
+package.domain = org.example
+source.dir = .
+source.include_exts = py,png,jpg,kv,atlas
+version = 0.1
+requirements = python3,kivy, cython
+orientation = portrait
+osx.python_version = 3
+fullscreen = 0
+android.permissions = INTERNET
+android.api = 31
+android.minapi = 21
+android.ndk = 23b
+android.archs = arm64-v8a
+p4a.branch = develop
+p4a.bootstrap = sdl2
+android.accept_sdk_license = True
+android.ndk_path = /Users/julia/.buildozer/android/platform/android-ndk-r27d
