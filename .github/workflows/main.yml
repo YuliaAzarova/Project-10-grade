@@ -8,13 +8,18 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
 
     env:
       ANDROID_HOME: $HOME/.buildozer/android/platform/android-sdk
       PATH: $HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin:$PATH
 
     steps:
+    - name: Check OS
+      run: |
+        uname -a
+        Isb_release -a || true
+    
     - name: Checkout repository
       uses: actions/checkout@v4
 
