@@ -24,9 +24,9 @@ jobs:
         python-version: 3.11
 
     - name: Install system dependencies
-  run: |
-    sudo apt update
-    sudo apt install -y \
+      run: |
+        sudo apt update
+        sudo apt install -y \
       build-essential ccache libffi-dev libssl-dev git zip unzip tar \
       openjdk-17-jdk libsqlite3-dev zlib1g-dev curl
 
