@@ -5,7 +5,6 @@ def bubble_sort_steps(data):
     n = len(data)
     for i in range(n - 1, 0, -1):
         for j in range(i):
-            print(data[j][1])
             if data[j][1] > data[j + 1][1]:
                 data[j], data[j + 1] = (data[j][0], data[j + 1][1]), (data[j+1][0], data[j][1])
             steps.append(data.copy())
