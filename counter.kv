@@ -1,0 +1,15 @@
+<Counter>:
+    orientation: 'vertical'
+    padding: 20
+
+    Label:
+        id: counter_label
+        text: '0'
+        font_size: 48
+
+    Button:
+        text: 'Увеличить'
+        on_press: root.increment()
+        size_hint_y: None
+        height: 50
+

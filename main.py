@@ -1,3 +1,4 @@
+import bubble_sort, buttons
 from kivy.config import Config
 Config.set('graphics', 'width', '450')
 Config.set('graphics', 'height', '900')
@@ -11,9 +12,10 @@ from kivy.uix.button import Button
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.spinner import Spinner
 from pygments.styles.dracula import background
+from kivy.clock import Clock
 
 
-class BarGraphApp(App, BoxLayout):
+class BarGraphApp(App):
     def build(self):
         layout = BoxLayout(orientation='vertical', padding=20)
 
@@ -55,7 +57,7 @@ class BarGraphApp(App, BoxLayout):
             xmin=-0.5, xmax=10, # координаты
             ymin=0, ymax=100)
         layout.add_widget(self.graph) # добавляем график
-        data = [
+        self.data = [
             (0, 85),
             (1, 40),
             (2, 95),
@@ -67,9 +69,9 @@ class BarGraphApp(App, BoxLayout):
             (8, 50),
             (9, 100),
         ] # столбцы x и y
-        plot_bar = BarPlot(color=rgb('#AFEEEE'), bar_width=50) # ширина столбца
-        plot_bar.points = data # параметры столбцов
-        self.graph.add_plot(plot_bar) # нарисовка
+        self.plot_bar = BarPlot(color=rgb('#AFEEEE'), bar_width=50) # ширина столбца
+        self.plot_bar.points = self.data # параметры столбцов
+        self.graph.add_plot(self.plot_bar) # нарисовка
 
 
 
@@ -99,49 +101,114 @@ class BarGraphApp(App, BoxLayout):
 
 
 
-        self.button_steps = False
+        self.animation_steps = [] # шаги запоминать
+        self.anim_index = 0 # считать шаги
+        self.anim_event = None # чекать
+
+
+
         self.steps_count = 0
+        self.steps = [(i, j) for i in range(len(self.data)) for j in range(0, i) ]
         return layout
 
     def on_spinner_select(self, spinner, value):
         self.status_label.text = value
 # +
     def on_press_sort(self, instance):
-        pass
+        if instance.text == "Сбросить сортировку":
+            self.reset()
+            if self.button_steps.disabled:
+                self.st_forward.text = "Шаг вперед"
+                self.st_forward.disabled = False
+            instance.text = "Запустить сортировку"
+            return
+
+
+        self.animation_steps = bubble_sort.bubble_sort_steps(self.data)
+        print(len(self.animation_steps))
+        self.anim_index = 0
+        self.anim_event = Clock.schedule_interval(self.animate, 0.05)
+
+        self.steps_count = len(self.steps)
+        if self.button_steps.text != "Сбросить сортировку":
+            instance.text = "Сбросить сортировку"
+        else:
+            self.button_steps.disabled = False
+            instance.disabled = True
+
+            if self.button_steps.disabled:
+                self.st_forward.disabled = True
+                self.st_forward.text = "Конец сортировки"
+                self.st_back.disabled = False
+# +-
 
     def on_press_steps(self, instance):
-        if not self.button_steps:
-            instance.text = "Идет сортировка"
+        if instance.text == "Запустить по шагам":
             self.st_back = Button(text='Шаг назад',
                             font_size='15sp',
-                            size_hint=(1, 0.9),
-                            on_press=self.on_press_s_back,
-                             background_color="#4169E1",
-                                  disabled=True)
+                                size_hint=(1, 0.9),
+                                on_press=self.on_press_s_back,
+                                 background_color="#4169E1",
+                                      disabled=True)
             self.st_forward = Button(text='Шаг вперед',
-                         font_size='15sp',
-                         size_hint=(1, 0.9),
-                            height=50,
-                        on_press=self.on_press_s_forward,
-                                background_color="#4169E1")
+                             font_size='15sp',
+                             size_hint=(1, 0.9),
+                                height=50,
+                            on_press=self.on_press_s_forward,
+                                    background_color="#4169E1")
 
 
             button_layout = BoxLayout(orientation='horizontal',
-                                  spacing=20)
+                                      spacing=20)
 
             button_layout.add_widget(self.st_back)
             button_layout.add_widget(self.st_forward)
             self.buttons_container.add_widget(button_layout)
-        self.button_steps = True
+            instance.text = "Сбросить сортировку"
+            instance.disabled = True
+        else:
+            self.plot_bar.points = self.data
+            self.graph.add_plot(self.plot_bar)
+            self.steps_count = 0
+            self.button_sort.disabled = False
+            instance.disabled = True
+            if self.button_steps.disabled:
+                self.st_forward.text = "Шаг вперед"
+                self.st_forward.disabled = False
 # +-
 
     def on_press_s_back(self, instance):
         self.steps_count -= 1
         if self.steps_count == 0:
             instance.disabled = True
+        self.st_forward.disabled = False
+        self.st_forward.text = "Шаг вперед"
 
 
     def on_press_s_forward(self, instance):
         self.steps_count += 1
         self.st_back.disabled = False
-BarGraphApp().run()
+        instance.text = "Шаг вперед"
+        if self.steps_count >= len(self.steps):
+            instance.disabled = True
+            instance.text = "Конец сортировки"
+            self.button_sort.text = "Сбросить сортировку"
+
+    def animate(self, dt):
+        if self.anim_index >= len(self.animation_steps): # проверка сколько шагов сделано
+            self.anim_event.cancel()
+            return
+
+        self.plot_bar.points = self.animation_steps[self.anim_index] # анимация
+
+        self.anim_index += 1
+
+    def reset(self):
+        if self.anim_event:
+            self.anim_event.cancel()
+
+        self.plot_bar.points = self.data
+        self.anim_index = 0
+
+if __name__ == '__main__':
+    BarGraphApp().run()
