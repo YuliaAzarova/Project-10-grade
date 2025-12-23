@@ -1,0 +1,72 @@
+
+<BarGraphApp>:
+
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 20
+        spacing: 10
+
+        Spinner:
+            id: spinner
+            text: 'Сортировка пузырьком'
+            values: ('Сортировка пузырьком', 'Сортировка слиянием', 'Сортировка вставками')
+            size_hint: 0.6, None
+            height: 100
+            pos_hint: {'center_x': 0.3}
+            on_text: app.on_spinner_select(self, self.text)
+
+        Label:
+            id: status_label
+            text: 'Сортировка пузырьком'
+            size_hint: 1, None
+            height: 150
+            font_size: '35sp'
+            color: 0.88, 1, 1, 1
+
+        BoxLayout:
+            size_hint_y: 3
+
+            Graph:
+                id: graph
+                xmin: -0.5
+                xmax: 10
+                ymin: 0
+                ymax: 100
+                x_ticks_minor: 1
+                x_ticks_major: 0.5
+                y_ticks_major: 10
+                y_ticks_minor: 2
+                x_grid: True
+                y_grid: True
+                x_grid_label: True
+                y_grid_label: True
+                padding: 10
+
+        ScrollView:
+            size_hint: 1, 1
+
+            BoxLayout:
+                id: buttons_container
+                orientation: 'vertical'
+                spacing: 10
+                size_hint_y: None
+                height: self.minimum_height
+
+                BoxLayout:
+                    spacing: 20
+                    size_hint_y: None
+                    height: 80
+
+                    Button:
+                        id: button_sort
+                        text: 'Запустить сортировку'
+                        font_size: '15sp'
+                        on_press: app.on_press_sort(self)
+                        background_color: 0.12, 0.56, 1, 1
+
+                    Button:
+                        id: button_steps
+                        text: 'Запустить по шагам'
+                        font_size: '15sp'
+                        on_press: app.on_press_steps(self)
+                        background_color: 0.0, 0.75, 1, 1

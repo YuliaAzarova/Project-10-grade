@@ -1,5 +1,8 @@
-import sorts, buttons
 from kivy.config import Config
+Config.set('graphics', 'width', '450')
+Config.set('graphics', 'height', '900')
+
+import sorts
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
@@ -10,15 +13,11 @@ from kivy.uix.scrollview import ScrollView
 from kivy.uix.spinner import Spinner
 from pygments.styles.dracula import background
 from kivy.clock import Clock
-Config.set('graphics', 'width', '450')
-Config.set('graphics', 'height', '900')
 
 
 class BarGraphApp(App):
     def build(self):
         layout = BoxLayout(orientation='vertical', padding=20)
-
-
 
         # выбор сортировки
         self.spinner = Spinner(
@@ -114,6 +113,8 @@ class BarGraphApp(App):
         self.status_label.text = value
 # +
 
+
+
     def on_press_sort(self, instance):
         if instance.text == "Сбросить сортировку":
             self.reset()
@@ -123,16 +124,19 @@ class BarGraphApp(App):
                 self.st_back.disabled = True
             return
 
-        self.animation_steps = sorts.bubble_sort_steps(self.data)
+        if self.status_label.text == "Сортировка пузырьком":
+            self.animation_steps = sorts.bubble_sort_steps(self.data)
+        elif self.status_label.text == "Сортировка вставками":
+            self.animation_steps = sorts.insert_sort_steps(self.data)
         self.anim_event = Clock.schedule_interval(self.animate, 0.1)
         instance.text = "Сбросить сортировку"
         if hasattr(self, 'st_forward'):
-            self.st_forward.disabled = False
-            self.st_back.disabled = True
+            self.st_forward.disabled = True
+            self.st_back.disabled = False
 # +
 
     def on_press_steps(self, instance):
-        self.st_back = Button(text='Шан назад',
+        self.st_back = Button(text='Шаг назад',
                             font_size='15sp',
                                 size_hint=(1, 0.9),
                                 on_press=self.on_press_s_back,
@@ -144,6 +148,9 @@ class BarGraphApp(App):
                                 height=50,
                             on_press=self.on_press_s_forward,
                                     background_color="#4169E1")
+        if self.button_sort.text == "Сбросить сортировку":
+            self.st_forward.disabled= True
+            self.st_back.disabled = False
 
 
         button_layout = BoxLayout(orientation='horizontal',
@@ -157,7 +164,10 @@ class BarGraphApp(App):
         instance.disabled = True
 
         self.anim_index = 0
-        self.animation_steps = sorts.bubble_sort_steps(self.data)
+        if self.status_label.text == "Сортировка пузырьком":
+            self.animation_steps = sorts.bubble_sort_steps(self.data)
+        elif self.status_label.text == "Сортировка вставками":
+            self.animation_steps = sorts.insert_sort_steps(self.data)
 # +
 
 
