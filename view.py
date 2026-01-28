@@ -1,95 +1,23 @@
-from pygments.styles.dracula import background
-# from view import BarGraphApp
-
 from kivy.config import Config
 Config.set('graphics', 'width', '450')
 Config.set('graphics', 'height', '900')
 
 import sorts
+from kivy.app import App
+from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
 from kivy_garden.graph import Graph, BarPlot
 from kivy.utils import get_color_from_hex as rgb
+from kivy.uix.button import Button
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.spinner import Spinner
 from pygments.styles.dracula import background
-from kivy.app import App
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.widget import Widget
-from kivy.uix.button import Button
-from kivy.graphics import Rectangle, Color
-from kivy.animation import Animation
 from kivy.clock import Clock
-
-
-class BarsWidget(Widget):
-    def __init__(self, values, **kwargs):
-        super().__init__(**kwargs)
-        self.values = values
-        self.bars = []
-
-        self.bar_width = 70
-        self.spacing = 10
-        self.max_value = max(values)
-
-        self.bind(size=self.draw_bars)
-
-    def draw_bars(self, *args):
-        self.canvas.clear()
-        self.bars.clear()
-
-        height_scale = (self.height) / self.max_value * 1.5
-        total_width = (len(self.values) * self.bar_width +
-                       (len(self.values) - 1) * self.spacing)
-        start_x = self.x + (self.width - total_width) / 2
-        self.y = 290
-
-        with self.canvas:
-            for i, value in enumerate(self.values):
-                Color(0.6, 0.8, 1, 1)
-                rect = Rectangle(
-                    pos=(start_x + i * (self.bar_width + self.spacing), self.y),
-                    size=(self.bar_width, value * height_scale)
-                )
-                self.bars.append(rect)
-
-    def animation(self, i, j, duration=0.3):
-        rect1 = self.bars[i]
-        rect2 = self.bars[j]
-
-        x1 = rect1.pos[0]
-        x2 = rect2.pos[0]
-
-        y1 = rect1.pos[1]
-        y2 = rect2.pos[1]
-
-        anim1 = Animation(pos=(x2, y1), duration=duration)
-        anim2 = Animation(pos=(x1, y2), duration=duration)
-
-        anim1.start(rect1)
-        anim2.start(rect2)
-
-        self.bars[i], self.bars[j] = self.bars[j], self.bars[i]
-        self.values[i], self.values[j] = self.values[j], self.values[i]
-
-    def animate(self, swaps, index=0):
-        print(swaps)
-        if index == len(swaps):
-            return
-
-        i, j = swaps[index]
-        self.animation(i, j)
-
-        Clock.schedule_once(
-            lambda dt: self.animate(swaps, index + 1),
-            0.45
-        )
-
-
 
 
 class BarGraphApp(App):
     def build(self):
-        layout = BoxLayout(orientation='vertical', padding=20, spacing=20)
+        layout = BoxLayout(orientation='vertical', padding=20)
 
         # выбор сортировки
         self.spinner = Spinner(
@@ -116,38 +44,36 @@ class BarGraphApp(App):
 
 
         # диаграмма
-        # self.graph = Graph(
-        #     size_hint_y=3,
-        #     size_hint_x=1,
-        #     x_ticks_minor=1, x_ticks_major=0.5, # основные и вспомогательные деления
-        #     y_ticks_major=10, y_ticks_minor=2, # основные деления и деления внутри делений
-        #     y_grid_label=True, x_grid_label=True, # наличие подписей делений
-        #     padding=10, # отступ
-        #     x_grid=True, y_grid=True, # наличие сетки по x, y
-        #     xmin=-0.5, xmax=10, # координаты
-        #     ymin=0, ymax=100)
-        # layout.add_widget(self.graph) # добавляем график
-        # self.data = [
-        #     (0, 85),
-        #     (1, 40),
-        #     (2, 95),
-        #     (3, 60),
-        #     (4, 20),
-        #     (5, 10),
-        #     (6, 15),
-        #     (7, 5),
-        #     (8, 50),
-        #     (9, 100),
-        # ] # столбцы x и y
-        # self.plot_bar = BarPlot(color=rgb('#AFEEEE'), bar_width=50) # ширина столбца
-        # self.highlight_bar = BarPlot(color=rgb('#FF4500'), bar_width=50)
-        # self.plot_bar.points = self.data # параметры столбцов
-        # self.graph.add_plot(self.plot_bar) # нарисовка
-        # self.graph.add_plot(self.highlight_bar)
+        self.graph = Graph(
+            size_hint_y=3,
+            size_hint_x=1,
+            x_ticks_minor=1, x_ticks_major=0.5, # основные и вспомогательные деления
+            y_ticks_major=10, y_ticks_minor=2, # основные деления и деления внутри делений
+            y_grid_label=True, x_grid_label=True, # наличие подписей делений
+            padding=10, # отступ
+            x_grid=True, y_grid=True, # наличие сетки по x, y
+            xmin=-0.5, xmax=10, # координаты
+            ymin=0, ymax=100)
+        layout.add_widget(self.graph) # добавляем график
+        self.data = [
+            (0, 85),
+            (1, 40),
+            (2, 95),
+            (3, 60),
+            (4, 20),
+            (5, 10),
+            (6, 15),
+            (7, 5),
+            (8, 50),
+            (9, 100),
+        ] # столбцы x и y
+        self.plot_bar = BarPlot(color=rgb('#AFEEEE'), bar_width=50) # ширина столбца
+        self.highlight_bar = BarPlot(color=rgb('#FF4500'), bar_width=50)
+        self.plot_bar.points = self.data # параметры столбцов
+        self.graph.add_plot(self.plot_bar) # нарисовка
+        self.graph.add_plot(self.highlight_bar)
 
-        self.data = [85, 40, 95, 60, 20, 10, 15, 5, 50, 100]
-        self.bars_widget = BarsWidget(self.data)
-        layout.add_widget(self.bars_widget)
+
 
         # кнопки
         self.scroll_view = ScrollView(size_hint=(1, 1))
@@ -206,7 +132,7 @@ class BarGraphApp(App):
             self.animation_steps = sorts.insert_sort_steps(self.data)
         elif self.status_label.text == "Сортировка слиянием":
             pass
-        self.bars_widget.animate(self.animation_steps)
+        self.anim_event = Clock.schedule_interval(self.animate, 0.1)
         instance.text = "Сбросить сортировку"
         if hasattr(self, 'st_forward'):
             self.st_forward.disabled = True
@@ -264,8 +190,7 @@ class BarGraphApp(App):
         self.st_forward.disabled = False
         self.st_forward.text = "Шаг вперед"
         self.button_sort.text = "Запустить сортировку"
-        points, highlights = self.animation_steps[self.anim_index]
-        self.highlight(points, highlights)
+        self.plot_bar.points = self.animation_steps[self.anim_index]
 
 
     def on_press_s_forward(self, instance):
