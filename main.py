@@ -299,6 +299,9 @@ class BarGraphApp(App):
             self.button_sort.text = "Сбросить сортировку"
             return
 
+def smth():
+    pass
+
 
 if __name__ == '__main__':
     BarGraphApp().run()
