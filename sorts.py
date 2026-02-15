@@ -23,3 +23,6 @@ def insert_sort_steps(data):
                 steps.append((j - 1, j))
 
     return steps
+
+def smth():
+    pass
