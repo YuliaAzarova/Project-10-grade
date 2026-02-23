@@ -37,19 +37,14 @@ def merge_sort_steps(data):
             if data[i] <= data[j]:
                 i += 1
             else:
-                # элемент data[j] нужно вставить перед data[i]
-                value = data[j]
                 k = j
-
-                # двигаем его влево соседними обменами
                 while k > i:
                     data[k], data[k - 1] = data[k - 1], data[k]
                     steps.append((k - 1, k))
                     k -= 1
-
                 i += 1
                 j += 1
-                mid += 1  # граница сдвигается
+                mid += 1
 
     def div(left, right):
         if right - left <= 1:
