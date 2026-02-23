@@ -18,7 +18,7 @@ class BarGraphApp(App):
         layout = BoxLayout(orientation='vertical', padding=20, spacing=20)
 
         self.spinner = Spinner(
-            text='Сортировка пузырьком',
+            text='Сортировка слиянием',
             values=('Сортировка пузырьком', 'Сортировка слиянием', 'Сортировка вставками'),
             size_hint=(0.6, None),
             size=(1, 100),
@@ -30,7 +30,7 @@ class BarGraphApp(App):
 
 
         # название выбранной сортировки
-        self.status_label = Label(text='Сортировка пузырьком',
+        self.status_label = Label(text='Сортировка слиянием',
                             size_hint=(1, None),
                             height=150,
                             font_size='35sp',
@@ -90,6 +90,8 @@ class BarGraphApp(App):
                 self.animation_steps = sorts.bubble_sort_steps(self.bars_widget.original_values.copy())
             elif self.status_label.text == "Сортировка вставками":
                 self.animation_steps = sorts.insert_sort_steps(self.bars_widget.original_values.copy())
+            elif self.status_label.text == "Сортировка слиянием":
+                self.animation_steps = sorts.merge_sort_steps(self.bars_widget.original_values.copy())
 
             instance.text = "Запустить сортировку"
 
@@ -114,9 +116,13 @@ class BarGraphApp(App):
             else:
                 self.animation_steps = sorts.insert_sort_steps(self.bars_widget.original_values.copy())
         elif self.status_label.text == "Сортировка слиянием":
-            pass
+            self.bars_widget.animating = True
+            if self.anim_index > 0:
+                self.animation_steps = sorts.merge_sort_steps(self.bars_widget.values.copy())
+            else:
+                self.animation_steps = sorts.merge_sort_steps(self.bars_widget.original_values.copy())
 
-        self.bars_widget.animate(self.animation_steps)
+        self.bars_widget.animate(self.animation_steps, self.status_label.text)
         instance.text = "Сбросить сортировку"
         if hasattr(self, 'st_forward'):
             self.st_forward.disabled = True
@@ -161,7 +167,8 @@ class BarGraphApp(App):
             self.animation_steps = sorts.bubble_sort_steps(self.bars_widget.original_values.copy())
         elif self.status_label.text == "Сортировка вставками":
             self.animation_steps = sorts.insert_sort_steps(self.bars_widget.original_values.copy())
-
+        elif self.status_label.text == "Сортировка слиянием":
+            self.animation_steps = sorts.merge_sort_steps(self.bars_widget.original_values.copy())
 
 
 
@@ -171,7 +178,7 @@ class BarGraphApp(App):
 
         self.anim_index -= 1
         swap = self.animation_steps[self.anim_index]
-        self.bars_widget.step(swap)
+        self.bars_widget.step(swap, self.status_label.text)
 
         self.st_forward.disabled = False
         self.st_forward.text = "Шаг вперед"
@@ -188,7 +195,7 @@ class BarGraphApp(App):
 
         self.st_back.disabled = False
         swap = self.animation_steps[self.anim_index]
-        self.bars_widget.step(swap)
+        self.bars_widget.step(swap, self.status_label.text)
         self.anim_index += 1
 
         if self.anim_index >= len(self.animation_steps):
