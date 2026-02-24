@@ -19,6 +19,7 @@ class BarsWidget(Widget):
         self.bind(size=self.draw_bars)
 
         self.anim_index = 0
+        self.extra_ind = 0
 
         self.anim_event = None
         self.animating = False
@@ -47,38 +48,46 @@ class BarsWidget(Widget):
                 })
 
     def step(self, swap, sort):
+        print(swap)
         if not swap:
             return
-        i, j = swap
-        self.animation(i, j, sort)
+        i, j = swap[0], swap[1]
+        if len(swap) > 2:
+            self.animation(i, j, sort, left=swap[2], right=swap[3])
+        else:
+            self.animation(i, j, sort)
 
     def reset_colors(self, i, j):
         if i < len(self.bars) and j < len(self.bars):
             for k in range(i, j+1):
                 self.bars[k]["color"].rgba = (1, .5, 0, 1)
 
-    def animation(self, i, j, sort, duration=0.27):
+    def animation(self, i, j, sort, duration=0.27, left=None, right=None):
         if sort == "Сортировка пузырьком":
             bar1 = self.bars[i]
             bar2 = self.bars[j]
             bar1["color"].rgba = (0.3, 1, 0.3, 1)
             bar2["color"].rgba = (1, 0.3, 0.3, 1)
-            ni, nj = i, j
-        elif sort == "Сортировка вставками":
-            bars = self.bars.copy()
-            for k in range(len(bars[:i+1])):
-                bars[k]["color"].rgba = (0.3, 1, 0.3, 1)
+            reset_i, reset_j = i, j
 
-            ni, nj = 0, j
+        elif sort == "Сортировка вставками":
+            if j > self.extra_ind:
+                self.extra_ind = j
+            bars = self.bars.copy()
+            for k in range( len(bars[:self.extra_ind]) + 1 ):
+                bars[k]["color"].rgba = (0.3, 1, 0.3, 1)
+            reset_i, reset_j = 0, len(bars)-1
             bars[j]["color"].rgba = (1, 0.3, 0.3, 1)
             bar1 = bars[i]
             bar2 = bars[j]
+
         elif sort == "Сортировка слиянием":
+            for k in range(left, right):
+                self.bars[k]["color"].rgba = (1, 0.3, 0.3, 1)
             bar1 = self.bars[i]
             bar2 = self.bars[j]
-            bar1["color"].rgba = (0.3, 1, 0.3, 1)
-            bar2["color"].rgba = (1, 0.3, 0.3, 1)
-            ni, nj = i, j
+            bar2["color"].rgba = (0.3, 1, 0.3, 1)
+            reset_i, reset_j = 0, len(self.bars)-1
 
 
 
@@ -98,7 +107,7 @@ class BarsWidget(Widget):
         anim2.start(rect2)
 
         Clock.schedule_once(
-        lambda dt: self.reset_colors(ni, nj),
+        lambda dt: self.reset_colors(reset_i, reset_j),
             0.3)
 
         self.bars[i], self.bars[j] = self.bars[j], self.bars[i]
@@ -113,8 +122,11 @@ class BarsWidget(Widget):
         if index == len(swaps):
             return
 
-        i, j = swaps[index]
-        self.animation(i, j, sort)
+        i, j = swaps[index][0], swaps[index][1]
+        if len(swaps[index]) > 2:
+            self.animation(i, j, sort, left=swaps[index][2], right=swaps[index][3])
+        else:
+            self.animation(i, j, sort)
 
         self.anim_event = Clock.schedule_once(
             lambda dt: self.animate(swaps, sort, index + 1),
@@ -123,6 +135,7 @@ class BarsWidget(Widget):
 
 
     def reset(self):
+        self.extra_ind = 0
         self.animating = False
 
         if self.anim_event:

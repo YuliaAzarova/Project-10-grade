@@ -159,6 +159,8 @@ class BarGraphApp(App):
         button_layout.add_widget(self.st_forward)
         self.buttons_container.add_widget(button_layout)
 
+        self.button_sort.text = "Запустить сортировку"
+
         instance.text = "Идет сортировка"
         instance.disabled = True
 

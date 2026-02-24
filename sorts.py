@@ -40,7 +40,7 @@ def merge_sort_steps(data):
                 k = j
                 while k > i:
                     data[k], data[k - 1] = data[k - 1], data[k]
-                    steps.append((k - 1, k))
+                    steps.append((k - 1, k, left, right))
                     k -= 1
                 i += 1
                 j += 1
