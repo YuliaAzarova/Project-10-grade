@@ -48,7 +48,6 @@ class BarsWidget(Widget):
                 })
 
     def step(self, swap, sort):
-        print(swap)
         if not swap:
             return
         i, j = swap[0], swap[1]
@@ -89,6 +88,12 @@ class BarsWidget(Widget):
             bar2["color"].rgba = (0.3, 1, 0.3, 1)
             reset_i, reset_j = 0, len(self.bars)-1
 
+        elif sort == "Быстрая сортировка":
+            bar1 = self.bars[i]
+            bar2 = self.bars[j]
+            bar1["color"].rgba = (0.3, 1, 0.3, 1)
+            bar2["color"].rgba = (1, 0.3, 0.3, 1)
+            reset_i, reset_j = i, j
 
 
         rect1 = bar1["rect"]

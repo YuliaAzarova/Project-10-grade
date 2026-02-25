@@ -56,3 +56,36 @@ def merge_sort_steps(data):
 
     div(0, len(data))
     return steps
+
+
+def quick_sort_steps(data):
+    arr = data.copy()
+    steps = []
+
+    def quick_sort(low, high):
+        if low >= high:
+            return
+
+        pivot = arr[high]
+        i = low - 1
+
+        for j in range(low, high):
+            if arr[j] <= pivot:
+                i += 1
+                if i != j:
+
+                    for k in range(j, i, -1):
+                        steps.append((k - 1, k))
+                        arr[k - 1], arr[k] = arr[k], arr[k - 1]
+
+        if i + 1 != high:
+            for k in range(high, i + 1, -1):
+                steps.append((k - 1, k))
+                arr[k - 1], arr[k] = arr[k], arr[k - 1]
+
+        pi = i + 1
+        quick_sort(low, pi - 1)
+        quick_sort(pi + 1, high)
+
+    quick_sort(0, len(arr) - 1)
+    return steps
