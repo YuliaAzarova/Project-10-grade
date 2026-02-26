@@ -5,7 +5,6 @@ Config.set('graphics', 'height', '900')
 
 import sorts
 from kivy.uix.label import Label
-from kivy.uix.scrollview import ScrollView
 from kivy.uix.spinner import Spinner
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
@@ -16,6 +15,8 @@ from widget import BarsWidget
 class BarGraphApp(App):
     def build(self):
         layout = BoxLayout(orientation='vertical', padding=20, spacing=20)
+
+
 
         self.spinner = Spinner(
             text='Быстрая сортировка',
@@ -30,7 +31,6 @@ class BarGraphApp(App):
 
 
 
-        # название выбранной сортировки
         self.status_label = Label(text='Быстрая сортировка',
                             size_hint=(1, None),
                             height=150,
@@ -38,33 +38,42 @@ class BarGraphApp(App):
                             color="#E0FFFF")
         layout.add_widget(self.status_label)
 
+
+
+        diagram_layout = BoxLayout(
+            orientation='horizontal',
+            spacing=10,
+            size_hint=(1, 2)
+        )
         self.data = [85, 40, 95, 60, 20, 10, 15, 5, 50, 100]
         self.bars_widget = BarsWidget(self.data)
-        layout.add_widget(self.bars_widget)
+        diagram_layout.add_widget(self.bars_widget)
+        layout.add_widget(diagram_layout)
 
 
-        self.scroll_view = ScrollView(size_hint=(1, 1))
-        self.buttons_container = BoxLayout(orientation='vertical', spacing=5, size_hint_y=0.8)
 
         buttons_layout = BoxLayout(
-            orientation='horizontal',
+            orientation='vertical',
             spacing=20, size_hint_y=2)
+
         self.button_sort = Button(text='Запустить сортировку',
                         font_size='15sp',
                         size_hint=(1, None),
                         on_press=self.on_press_sort,
-                        background_color="#1E90FF")
+                        background_color="#1E90FF") # зеленый
+
+        self.steps_layout = BoxLayout(
+            orientation='horizontal',
+            spacing=20, size_hint=(1, None))
         self.button_steps = Button(text='Запустить шаги',
                          font_size='15sp',
-                         size_hint=(1, None),
                         on_press=self.on_press_steps,
                         background_color="#00BFFF") # синий
-        buttons_layout.add_widget(self.button_sort)
-        buttons_layout.add_widget(self.button_steps)
+        self.steps_layout.add_widget(self.button_steps)
 
-        self.buttons_container.add_widget(buttons_layout)
-        self.scroll_view.add_widget(self.buttons_container)
-        layout.add_widget(self.scroll_view)
+        buttons_layout.add_widget(self.button_sort)
+        buttons_layout.add_widget(self.steps_layout)
+        layout.add_widget(buttons_layout)
 
 
 
@@ -131,6 +140,8 @@ class BarGraphApp(App):
         self.bars_widget.reset()
         self.anim_index *= 0
         self.bars_widget.animating = False
+        self.steps_layout.clear_widgets()
+
         self.st_back = Button(text='Шаг назад',
                             font_size='15sp',
                                 size_hint=(1, 0.9),
@@ -143,19 +154,15 @@ class BarGraphApp(App):
                                 height=50,
                             on_press=self.on_press_s_forward,
                                     background_color="#4169E1")
-        if self.anim_index > 0:
-            self.st_forward.disabled= False
-            self.st_back.disabled = False
-        else:
-            self.st_forward.disabled = False
-            self.st_back.disabled = True
+        self.st_forward.disabled = False
+        self.st_back.disabled = True
 
 
         button_layout = BoxLayout(orientation='horizontal', spacing=20)
 
         button_layout.add_widget(self.st_back)
         button_layout.add_widget(self.st_forward)
-        self.buttons_container.add_widget(button_layout)
+        self.steps_layout.add_widget(button_layout)
 
         self.button_sort.text = "Запустить сортировку"
 
