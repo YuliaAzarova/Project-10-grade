@@ -4,6 +4,7 @@ Config.set('graphics', 'width', '450')
 Config.set('graphics', 'height', '900')
 
 import sorts
+from random import shuffle
 from kivy.uix.label import Label
 from kivy.uix.spinner import Spinner
 from kivy.app import App
@@ -24,8 +25,7 @@ class BarGraphApp(App):
                     'Быстрая сортировка'),
             size_hint=(0.6, None),
             size=(1, 100),
-            pos_hint={'center_x': 0.3, 'center_y': 0.5}
-        )
+            pos_hint={'center_x': 0.3, 'center_y': 0.5})
         self.spinner.bind(text=self.on_spinner_select)
         layout.add_widget(self.spinner)
 
@@ -43,8 +43,7 @@ class BarGraphApp(App):
         diagram_layout = BoxLayout(
             orientation='horizontal',
             spacing=10,
-            size_hint=(1, 2)
-        )
+            size_hint=(1, 2))
         self.data = [85, 40, 95, 60, 20, 10, 15, 5, 50, 100]
         self.bars_widget = BarsWidget(self.data)
         diagram_layout.add_widget(self.bars_widget)
@@ -61,6 +60,13 @@ class BarGraphApp(App):
                         size_hint=(1, None),
                         on_press=self.on_press_sort,
                         background_color="#1E90FF") # зеленый
+        self.button_shuffle = Button(text='Перемешать',
+                                  font_size='15sp',
+                                  size_hint=(1, None),
+                                  on_press=self.on_press_shuffle,
+                                  background_color="#1E90FF")
+        buttons_layout.add_widget(self.button_sort)
+        buttons_layout.add_widget(self.button_shuffle)
 
         self.steps_layout = BoxLayout(
             orientation='horizontal',
@@ -70,9 +76,8 @@ class BarGraphApp(App):
                         on_press=self.on_press_steps,
                         background_color="#00BFFF") # синий
         self.steps_layout.add_widget(self.button_steps)
-
-        buttons_layout.add_widget(self.button_sort)
         buttons_layout.add_widget(self.steps_layout)
+
         layout.add_widget(buttons_layout)
 
 
@@ -86,6 +91,8 @@ class BarGraphApp(App):
         self.steps_count = 0
         self.steps = [(i, j) for i in range(len(self.data)) for j in range(0, i) ]
         return layout
+
+
 
     def on_spinner_select(self, spinner, value):
         self.status_label.text = value
@@ -134,6 +141,16 @@ class BarGraphApp(App):
         if hasattr(self, 'st_forward'):
             self.st_forward.disabled = True
             self.st_back.disabled = True
+
+    def on_press_shuffle(self, instance):
+        self.bars_widget.animating = False
+        self.bars_widget.reset()
+        self.anim_index *= 0
+        shuffle(self.bars_widget.original_values)
+        self.data, self.bars_widget.values = self.bars_widget.values.copy(), self.bars_widget.values.copy()
+
+        self.bars_widget.draw_bars()
+        self.button_sort.text = "Запустить сортировку"
 
 
     def on_press_steps(self, instance):
@@ -196,7 +213,6 @@ class BarGraphApp(App):
         if self.anim_index <= 0:
             instance.disabled = True
             return
-
 
     def on_press_s_forward(self, instance):
         if getattr(self.bars_widget, "busy", False):
