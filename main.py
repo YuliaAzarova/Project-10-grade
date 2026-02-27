@@ -144,13 +144,27 @@ class BarGraphApp(App):
 
     def on_press_shuffle(self, instance):
         self.bars_widget.animating = False
-        self.bars_widget.reset()
         self.anim_index *= 0
-        shuffle(self.bars_widget.original_values)
-        self.data, self.bars_widget.values = self.bars_widget.values.copy(), self.bars_widget.values.copy()
+
+        new_data = self.bars_widget.values.copy()
+        shuffle(new_data)
+        self.bars_widget.original_values = new_data.copy()
+        self.bars_widget.values = new_data.copy()
 
         self.bars_widget.draw_bars()
         self.button_sort.text = "Запустить сортировку"
+        if self.status_label.text == "Сортировка пузырьком":
+            self.animation_steps = sorts.bubble_sort_steps(self.bars_widget.original_values.copy())
+        elif self.status_label.text == "Сортировка вставками":
+            self.animation_steps = sorts.insert_sort_steps(self.bars_widget.original_values.copy())
+        elif self.status_label.text == "Сортировка слиянием":
+            self.animation_steps = sorts.merge_sort_steps(self.bars_widget.original_values.copy())
+        elif self.status_label.text == "Быстрая сортировка":
+            self.animation_steps = sorts.quick_sort_steps(self.bars_widget.original_values.copy())
+
+        if hasattr(self, 'st_forward'):
+            self.st_forward.disabled = False
+            self.st_back.disabled = True
 
 
     def on_press_steps(self, instance):
@@ -183,9 +197,6 @@ class BarGraphApp(App):
 
         self.button_sort.text = "Запустить сортировку"
 
-        instance.text = "Идет сортировка"
-        instance.disabled = True
-
         self.anim_index *= 0
         if self.status_label.text == "Сортировка пузырьком":
             self.animation_steps = sorts.bubble_sort_steps(self.bars_widget.original_values.copy())
@@ -217,7 +228,6 @@ class BarGraphApp(App):
     def on_press_s_forward(self, instance):
         if getattr(self.bars_widget, "busy", False):
             return
-
         self.st_back.disabled = False
         swap = self.animation_steps[self.anim_index]
         self.bars_widget.step(swap, self.status_label.text)

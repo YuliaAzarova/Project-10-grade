@@ -74,7 +74,6 @@ def quick_sort_steps(data):
             if arr[j] <= pivot:
                 i += 1
                 if i != j:
-
                     for k in range(j, i, -1):
                         steps.append((k - 1, k, pi_ind))
                         arr[k - 1], arr[k] = arr[k], arr[k - 1]
@@ -84,7 +83,8 @@ def quick_sort_steps(data):
                         elif k - 1 == pi_ind:
                             pi_ind = k
 
-        if i + 1 != high:
+        pi = i+1
+        if pi_ind > pi:
             for k in range(high, i + 1, -1):
                 steps.append((k - 1, k, pi_ind))
                 arr[k - 1], arr[k] = arr[k], arr[k - 1]
@@ -98,3 +98,4 @@ def quick_sort_steps(data):
 
     quick_sort(0, len(arr) - 1)
     return steps
+

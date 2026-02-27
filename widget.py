@@ -7,7 +7,7 @@ from kivy.clock import Clock
 class BarsWidget(Widget):
     def __init__(self, values, **kwargs):
         super().__init__(**kwargs)
-        self.values = values
+        self.values = values.copy()
         self.original_values = values.copy()
         self.bars = []
         self.history = []
@@ -63,7 +63,7 @@ class BarsWidget(Widget):
             for k in range(i, j+1):
                 self.bars[k]["color"].rgba = (1, .5, 0, 1)
 
-    def animation(self, i, j, sort, duration=0.27, left=None, right=None, pivot=None):
+    def animation(self, i, j, sort, duration=0.27, left=None, right=None, pi_ind=None):
         if sort == "Сортировка пузырьком":
             bar1 = self.bars[i]
             bar2 = self.bars[j]
@@ -95,8 +95,8 @@ class BarsWidget(Widget):
             bar2 = self.bars[j]
             bar1["color"].rgba = (0.3, 1, 0.3, 1)
             bar2["color"].rgba = (1, 0.3, 0.3, 1)
-            self.bars[pivot]["color"].rgba = (0.6, 0.2, 1, 1)
-            reset_i, reset_j = min(i, j, pivot), max(i, j, pivot)
+            self.bars[pi_ind]["color"].rgba = (0.6, 0.2, 1, 1)
+            reset_i, reset_j = min(i, j, pi_ind), max(i, j, pi_ind)
 
 
         rect1 = bar1["rect"]
@@ -134,7 +134,7 @@ class BarsWidget(Widget):
         if len(swaps[index]) > 3:
             self.animation(i, j, sort, left=swaps[index][2], right=swaps[index][3])
         elif len(swaps[index]) > 2:
-            self.animation(i, j, sort, pivot=swaps[index][2])
+            self.animation(i, j, sort, pi_ind=swaps[index][2])
         else:
             self.animation(i, j, sort)
 
