@@ -99,3 +99,17 @@ def quick_sort_steps(data):
     quick_sort(0, len(arr) - 1)
     return steps
 
+
+def select_sort_steps(data):
+    data = data.copy()
+    steps = []
+    for i in range(len(data)):
+        minim = (data[i], i)
+        for j in range(i + 1, len(data)):
+            if data[j] < minim[0]:
+                minim = (data[j], j)
+        for k in range(minim[1], i, -1):
+            steps.append((k, k-1, i))
+            data[k], data[k - 1] = data[k - 1], data[k]
+
+    return steps

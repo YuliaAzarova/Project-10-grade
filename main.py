@@ -12,7 +12,6 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from widget import BarsWidget
 
-
 class BarGraphApp(App):
     def build(self):
         layout = BoxLayout(orientation='vertical', padding=20, spacing=20)
@@ -22,7 +21,7 @@ class BarGraphApp(App):
         self.spinner = Spinner(
             text='Быстрая сортировка',
             values=('Сортировка пузырьком', 'Сортировка слиянием', 'Сортировка вставками',
-                    'Быстрая сортировка'),
+                    'Быстрая сортировка', 'Сортировка выбором'),
             size_hint=(0.6, None),
             size=(1, 100),
             pos_hint={'center_x': 0.3, 'center_y': 0.5})
@@ -31,7 +30,7 @@ class BarGraphApp(App):
 
 
 
-        self.status_label = Label(text='Быстрая сортировка',
+        self.status_label = Label(text='Сортировка выбором',
                             size_hint=(1, None),
                             height=150,
                             font_size='35sp',
@@ -97,20 +96,25 @@ class BarGraphApp(App):
     def on_spinner_select(self, spinner, value):
         self.status_label.text = value
 
+    def set_animation_steps(self, to_sort):
+        if self.status_label.text == "Сортировка пузырьком":
+            self.animation_steps = sorts.bubble_sort_steps(to_sort)
+        elif self.status_label.text == "Сортировка вставками":
+            self.animation_steps = sorts.insert_sort_steps(to_sort)
+        elif self.status_label.text == "Сортировка слиянием":
+            self.animation_steps = sorts.merge_sort_steps(to_sort)
+        elif self.status_label.text == "Быстрая сортировка":
+            self.animation_steps = sorts.quick_sort_steps(to_sort)
+        elif self.status_label.text == "Сортировка выбором":
+            self.animation_steps = sorts.select_sort_steps(to_sort)
+
 
 
     def on_press_sort(self, instance):
         if instance.text == "Сбросить сортировку":
             self.bars_widget.reset()
             self.anim_index *= 0
-            if self.status_label.text == "Сортировка пузырьком":
-                self.animation_steps = sorts.bubble_sort_steps(self.bars_widget.original_values.copy())
-            elif self.status_label.text == "Сортировка вставками":
-                self.animation_steps = sorts.insert_sort_steps(self.bars_widget.original_values.copy())
-            elif self.status_label.text == "Сортировка слиянием":
-                self.animation_steps = sorts.merge_sort_steps(self.bars_widget.original_values.copy())
-            elif self.status_label.text == "Быстрая сортировка":
-                self.animation_steps = sorts.quick_sort_steps(self.bars_widget.original_values.copy())
+            self.set_animation_steps(self.bars_widget.original_values.copy())
 
             instance.text = "Запустить сортировку"
 
@@ -127,14 +131,7 @@ class BarGraphApp(App):
         else:
             to_sort = self.bars_widget.original_values.copy()
 
-        if self.status_label.text == "Сортировка пузырьком":
-            self.animation_steps = sorts.bubble_sort_steps(to_sort)
-        elif self.status_label.text == "Сортировка вставками":
-            self.animation_steps = sorts.insert_sort_steps(to_sort)
-        elif self.status_label.text == "Сортировка слиянием":
-            self.animation_steps = sorts.merge_sort_steps(to_sort)
-        elif self.status_label.text == "Быстрая сортировка":
-            self.animation_steps = sorts.quick_sort_steps(to_sort)
+        self.set_animation_steps(to_sort)
 
         self.bars_widget.animate(self.animation_steps, self.status_label.text)
         instance.text = "Сбросить сортировку"
@@ -153,14 +150,7 @@ class BarGraphApp(App):
 
         self.bars_widget.draw_bars()
         self.button_sort.text = "Запустить сортировку"
-        if self.status_label.text == "Сортировка пузырьком":
-            self.animation_steps = sorts.bubble_sort_steps(self.bars_widget.original_values.copy())
-        elif self.status_label.text == "Сортировка вставками":
-            self.animation_steps = sorts.insert_sort_steps(self.bars_widget.original_values.copy())
-        elif self.status_label.text == "Сортировка слиянием":
-            self.animation_steps = sorts.merge_sort_steps(self.bars_widget.original_values.copy())
-        elif self.status_label.text == "Быстрая сортировка":
-            self.animation_steps = sorts.quick_sort_steps(self.bars_widget.original_values.copy())
+        self.set_animation_steps(self.bars_widget.original_values.copy())
 
         if hasattr(self, 'st_forward'):
             self.st_forward.disabled = False
@@ -198,14 +188,7 @@ class BarGraphApp(App):
         self.button_sort.text = "Запустить сортировку"
 
         self.anim_index *= 0
-        if self.status_label.text == "Сортировка пузырьком":
-            self.animation_steps = sorts.bubble_sort_steps(self.bars_widget.original_values.copy())
-        elif self.status_label.text == "Сортировка вставками":
-            self.animation_steps = sorts.insert_sort_steps(self.bars_widget.original_values.copy())
-        elif self.status_label.text == "Сортировка слиянием":
-            self.animation_steps = sorts.merge_sort_steps(self.bars_widget.original_values.copy())
-        elif self.status_label.text == "Быстрая сортировка":
-            self.animation_steps = sorts.quick_sort_steps(self.bars_widget.original_values.copy())
+        self.set_animation_steps(self.bars_widget.original_values.copy())
 
 
 
