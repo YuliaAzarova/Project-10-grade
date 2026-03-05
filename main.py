@@ -4,7 +4,7 @@ Config.set('graphics', 'width', '450')
 Config.set('graphics', 'height', '900')
 
 import sorts
-from random import shuffle
+from random import randint
 from kivy.uix.label import Label
 from kivy.uix.spinner import Spinner
 from kivy.app import App
@@ -146,7 +146,8 @@ class BarGraphApp(App):
         self.anim_index *= 0
 
         new_data = self.bars_widget.values.copy()
-        shuffle(new_data)
+        for i in range(len(new_data)):
+            new_data[i] = randint(0, 100)
         self.bars_widget.original_values = new_data.copy()
         self.bars_widget.values = new_data.copy()
 
