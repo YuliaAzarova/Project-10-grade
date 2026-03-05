@@ -44,7 +44,8 @@ class BarsWidget(Widget):
                 )
                 self.bars.append({
                     "rect": rect,
-                    "color": color
+                    "color": color,
+                    "value": value
                 })
 
     def step(self, swap, sort):
@@ -103,6 +104,16 @@ class BarsWidget(Widget):
                 self.bars[k]["color"].rgba = (1, 0.3, 0.3, 1)
             bar1 = self.bars[i]
             bar2 = self.bars[j]
+            bar1["color"].rgba = (0.3, 1, 0.3, 1)
+            reset_i, reset_j = 0, len(self.bars)-1
+
+        elif sort == "Сортировка расческой":
+            bar1 = self.bars[i]
+            bar2 = self.bars[j]
+            tens = bar1["value"] // 10
+            for k in range(len(self.bars)):
+                if self.bars[k]["value"] // 10 == tens:
+                    self.bars[k]["color"].rgba = (1, 0.3, 0.3, 1)
             bar1["color"].rgba = (0.3, 1, 0.3, 1)
             reset_i, reset_j = 0, len(self.bars)-1
 
