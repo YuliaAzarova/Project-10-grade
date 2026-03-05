@@ -29,7 +29,7 @@ class BarsWidget(Widget):
         self.canvas.clear()
         self.bars.clear()
 
-        height_scale = (self.height) / self.max_value * 1.4
+        height_scale = (self.height) / self.max_value * 1.17
         total_width = (len(self.values) * self.bar_width +
                        (len(self.values) - 1) * self.spacing)
         start_x = self.x + (self.width - total_width) / 2
@@ -112,7 +112,7 @@ class BarsWidget(Widget):
             bar2 = self.bars[j]
             tens = bar1["value"] // 10
             for k in range(len(self.bars)):
-                if self.bars[k]["value"] // 10 == tens:
+                if self.bars[k]["value"]//10 == tens:
                     self.bars[k]["color"].rgba = (1, 0.3, 0.3, 1)
             bar1["color"].rgba = (0.3, 1, 0.3, 1)
             reset_i, reset_j = 0, len(self.bars)-1

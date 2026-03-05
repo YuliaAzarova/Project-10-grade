@@ -43,7 +43,9 @@ class BarGraphApp(App):
             orientation='horizontal',
             spacing=10,
             size_hint=(1, 2))
-        self.data = [85, 40, 95, 60, 20, 10, 15, 5, 50, 100]
+        self.data = []
+        for i in range(10):
+            self.data.append(randint(0, 100))
         self.bars_widget = BarsWidget(self.data)
         diagram_layout.add_widget(self.bars_widget)
         layout.add_widget(diagram_layout)
