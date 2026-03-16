@@ -17,11 +17,12 @@ class BarGraphApp(App):
         layout = BoxLayout(orientation='vertical', padding=20, spacing=20)
 
 
-
+        spinner_values = ('Сортировка пузырьком', 'Сортировка слиянием', 'Сортировка вставками',
+                    'Быстрая сортировка', 'Сортировка выбором', 'Сортировка расческой')
+        current_value = spinner_values[0]
         self.spinner = Spinner(
-            text='Сортировка расческой',
-            values=('Сортировка пузырьком', 'Сортировка слиянием', 'Сортировка вставками',
-                    'Быстрая сортировка', 'Сортировка выбором', 'Сортировка расческой'),
+            text=current_value,
+            values=spinner_values,
             size_hint=(0.6, None),
             size=(1, 100),
             pos_hint={'center_x': 0.3, 'center_y': 0.5})
@@ -30,7 +31,7 @@ class BarGraphApp(App):
 
 
 
-        self.status_label = Label(text='Сортировка расческой',
+        self.status_label = Label(text=self.spinner.text,
                             size_hint=(1, None),
                             height=150,
                             font_size='35sp',

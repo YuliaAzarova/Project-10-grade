@@ -116,23 +116,24 @@ def select_sort_steps(data):
 
 
 def comb_sort_steps(data):
-    data = data.copy()
+    gap = len(data)
+    shrink = 1.247
+    finish = False
     steps = []
-    n = len(data)
-    step = n
-    while n > 1:
-        step = int(step / 1.247)
-        if step < 1:
-            step = 1
-        k = 0
-        for i in range(n-step):
-            if data[i] // 10 > data[i + step] // 10:
-                for j in range(i+step, i, -1):
-                    k = i
-                    data[j], data[j - 1] = data[j - 1], data[j]
-                    steps.append((j, j - 1, data[i]//10))
-        if step == 1:
-            n = k + 1
-    steps += bubble_sort_steps(data)
-    return steps
 
+    while not finish:
+        gap = int(gap / shrink)
+
+        if gap <= 1:
+            gap = 1
+            finish = True
+
+        i = 0
+        while i + gap < len(data):
+            if data[i] > data[i + gap]:
+                data[i], data[i + gap] = data[i + gap], data[i]
+                steps.append((i, i + gap))
+                finish = False
+            i += 1
+
+    return steps
