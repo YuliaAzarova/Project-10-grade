@@ -1,5 +1,6 @@
 from pygments.styles.dracula import background
 from kivy.config import Config
+from kivy.graphics import Color, Rectangle
 Config.set('graphics', 'width', '450')
 Config.set('graphics', 'height', '900')
 
@@ -11,10 +12,22 @@ from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from widget import BarsWidget
+from kivy.uix.spinner import SpinnerOption
+
+class CustomSpinnerOption(SpinnerOption):
+    font_name = 'Mulish-Italic-VariableFont_wght.ttf'
 
 class BarGraphApp(App):
     def build(self):
+        self.font = 'Mulish-VariableFont_wght.ttf'
         layout = BoxLayout(orientation='vertical', padding=20, spacing=20)
+
+        with layout.canvas.before:
+            Color(0.06, 0.09, 0.16, 1)
+            self.rect = Rectangle(size=layout.size, pos=layout.pos)
+
+        layout.bind(size=self.update_rect, pos=self.update_rect)
+
 
 
         spinner_values = ('Сортировка пузырьком', 'Сортировка слиянием', 'Сортировка вставками',
@@ -25,17 +38,23 @@ class BarGraphApp(App):
             values=spinner_values,
             size_hint=(0.6, None),
             size=(1, 100),
+            font_name=self.font,
+            option_cls=CustomSpinnerOption,
             pos_hint={'center_x': 0.3, 'center_y': 0.5})
         self.spinner.bind(text=self.on_spinner_select)
         layout.add_widget(self.spinner)
 
 
 
-        self.status_label = Label(text=self.spinner.text,
-                            size_hint=(1, None),
-                            height=150,
-                            font_size='35sp',
-                            color="#E0FFFF")
+        self.status_label = Label(
+            text=self.spinner.text,
+            size_hint=(1, None),
+            height=120,
+            font_size='38sp',
+            bold=True,
+            font_name=self.font,
+            color="#38BDF8"
+        )
         layout.add_widget(self.status_label)
 
 
@@ -43,7 +62,7 @@ class BarGraphApp(App):
         diagram_layout = BoxLayout(
             orientation='horizontal',
             spacing=10,
-            size_hint=(1, 2))
+            size_hint=(1, 1.9))
         self.data = []
         for i in range(10):
             self.data.append(randint(0, 100))
@@ -61,22 +80,30 @@ class BarGraphApp(App):
                         font_size='15sp',
                         size_hint=(1, None),
                         on_press=self.on_press_sort,
-                        background_color="#1E90FF") # зеленый
+                        font_name=self.font,
+                        background_normal='',
+                        background_color=(0.02, 0.50, 0.85, 1))
         self.button_shuffle = Button(text='Перемешать',
-                                  font_size='15sp',
-                                  size_hint=(1, None),
-                                  on_press=self.on_press_shuffle,
-                                  background_color="#1E90FF")
+                        font_size='15sp',
+                        size_hint=(1, None),
+                        on_press=self.on_press_shuffle,
+                        font_name=self.font,
+                        background_normal='',
+                        background_color=(0.02, 0.50, 0.85, 1))
         buttons_layout.add_widget(self.button_sort)
         buttons_layout.add_widget(self.button_shuffle)
+
+
 
         self.steps_layout = BoxLayout(
             orientation='horizontal',
             spacing=20, size_hint=(1, None))
         self.button_steps = Button(text='Запустить шаги',
-                         font_size='15sp',
+                        font_size='15sp',
                         on_press=self.on_press_steps,
-                        background_color="#00BFFF") # синий
+                        font_name=self.font,
+                        background_normal='',
+                        background_color=(0.02, 0.60, 0.75, 1))
         self.steps_layout.add_widget(self.button_steps)
         buttons_layout.add_widget(self.steps_layout)
 
@@ -94,10 +121,9 @@ class BarGraphApp(App):
         self.steps = [(i, j) for i in range(len(self.data)) for j in range(0, i) ]
         return layout
 
-
-
-    def on_spinner_select(self, spinner, value):
-        self.status_label.text = value
+    def update_rect(self, instance, value):
+        self.rect.pos = instance.pos
+        self.rect.size = instance.size
 
     def set_animation_steps(self, to_sort):
         if self.status_label.text == "Сортировка пузырьком":
@@ -113,6 +139,9 @@ class BarGraphApp(App):
         elif self.status_label.text == "Сортировка расческой":
             self.animation_steps = sorts.comb_sort_steps(to_sort)
 
+
+    def on_spinner_select(self, spinner, value):
+        self.status_label.text = value
 
 
     def on_press_sort(self, instance):
@@ -171,16 +200,20 @@ class BarGraphApp(App):
 
         self.st_back = Button(text='Шаг назад',
                             font_size='15sp',
-                                size_hint=(1, 0.9),
-                                on_press=self.on_press_s_back,
-                                 background_color="#4169E1",
-                                      disabled=True)
+                            size_hint=(1, 0.9),
+                            on_press=self.on_press_s_back,
+                            font_name=self.font,
+                            background_normal='',
+                            background_color=(0.02, 0.42, 0.80, 1),
+                            disabled=True)
         self.st_forward = Button(text='Шаг вперед',
-                             font_size='15sp',
-                             size_hint=(1, 0.9),
-                                height=50,
+                            font_size='15sp',
+                            size_hint=(1, 0.9),
+                            height=50,
                             on_press=self.on_press_s_forward,
-                                    background_color="#4169E1")
+                            font_name=self.font,
+                            background_normal='',
+                            background_color=(0.02, 0.42, 0.80, 1))
         self.st_forward.disabled = False
         self.st_back.disabled = True
 
