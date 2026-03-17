@@ -115,6 +115,7 @@ class BarsWidget(Widget):
                 if self.bars[k]["value"]//10 == tens:
                     self.bars[k]["color"].rgba = (1, 0.3, 0.3, 1)
             bar1["color"].rgba = (0.3, 1, 0.3, 1)
+            self.bars[ind]["color"].rgba = (0.6, 0.2, 1, 1)
             reset_i, reset_j = 0, len(self.bars)-1
 
 
@@ -150,9 +151,9 @@ class BarsWidget(Widget):
             return
 
         i, j = swaps[index][0], swaps[index][1]
-        if len(swaps[index]) > 3:
+        if len(swaps[index]) == 4:
             self.animation(i, j, sort, left=swaps[index][2], right=swaps[index][3])
-        elif len(swaps[index]) > 2:
+        elif len(swaps[index]) == 3:
             self.animation(i, j, sort, ind=swaps[index][2])
         else:
             self.animation(i, j, sort)

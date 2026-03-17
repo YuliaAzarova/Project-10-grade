@@ -16,6 +16,8 @@ from kivy.uix.spinner import SpinnerOption
 
 class CustomSpinnerOption(SpinnerOption):
     font_name = 'Mulish-Italic-VariableFont_wght.ttf'
+    background_normal = ''
+    background_color = (0.02, 0.60, 0.75, 1)
 
 class BarGraphApp(App):
     def build(self):
@@ -39,6 +41,8 @@ class BarGraphApp(App):
             size_hint=(0.6, None),
             size=(1, 100),
             font_name=self.font,
+            background_normal='',
+            background_color=(0.02, 0.50, 0.85, 1),
             option_cls=CustomSpinnerOption,
             pos_hint={'center_x': 0.3, 'center_y': 0.5})
         self.spinner.bind(text=self.on_spinner_select)

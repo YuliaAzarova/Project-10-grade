@@ -132,7 +132,10 @@ def comb_sort_steps(data):
         while i + gap < len(data):
             if data[i] > data[i + gap]:
                 data[i], data[i + gap] = data[i + gap], data[i]
-                steps.append((i, i + gap))
+                for j in range(i, i + gap):
+                    steps.append((j, j + 1, i + gap))
+                for j in range(i + gap - 1, i, -1):
+                    steps.append((j, j - 1, i + gap))
                 finish = False
             i += 1
 
