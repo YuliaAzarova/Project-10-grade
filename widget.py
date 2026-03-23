@@ -54,11 +54,11 @@ class BarsWidget(Widget):
             return
         i, j = swap[0], swap[1]
         if len(swap) > 3:
-            self.animation(i, j, sort, left=swap[2], right=swap[3])
+            self.animation(i, j, sort, left=swap[2], right=swap[3], delta_time=0.03)
         elif len(swap) > 2:
-            self.animation(i, j, sort, ind=swap[2])
+            self.animation(i, j, sort, ind=swap[2], delta_time=0.03)
         else:
-            self.animation(i, j, sort)
+            self.animation(i, j, sort, delta_time=0.03)
 
     def reset_colors(self, i, j):
         if i < len(self.bars) and j < len(self.bars):

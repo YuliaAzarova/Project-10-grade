@@ -129,7 +129,11 @@ class BarGraphApp(App):
         self.rect.pos = instance.pos
         self.rect.size = instance.size
 
-    def set_animation_steps(self, to_sort):
+    def set_animation_steps(self):
+        if self.anim_index > 0:
+            to_sort = self.bars_widget.values.copy()
+        else:
+            to_sort = self.bars_widget.original_values.copy()
         if self.status_label.text == "Сортировка пузырьком":
             self.animation_steps = sorts.bubble_sort_steps(to_sort)
         elif self.status_label.text == "Сортировка вставками":
@@ -146,13 +150,14 @@ class BarGraphApp(App):
 
     def on_spinner_select(self, spinner, value):
         self.status_label.text = value
+        self.set_animation_steps()
 
 
     def on_press_sort(self, instance):
         if instance.text == "Сбросить сортировку":
             self.bars_widget.reset()
             self.anim_index *= 0
-            self.set_animation_steps(self.bars_widget.original_values.copy())
+            self.set_animation_steps()
 
             instance.text = "Запустить сортировку"
 
@@ -164,12 +169,7 @@ class BarGraphApp(App):
 
         self.bars_widget.animating = True
 
-        if self.anim_index > 0:
-            to_sort = self.bars_widget.values.copy()
-        else:
-            to_sort = self.bars_widget.original_values.copy()
-
-        self.set_animation_steps(to_sort)
+        self.set_animation_steps()
 
         self.bars_widget.animate(self.animation_steps, self.status_label.text)
         instance.text = "Сбросить сортировку"
@@ -189,7 +189,7 @@ class BarGraphApp(App):
 
         self.bars_widget.draw_bars()
         self.button_sort.text = "Запустить сортировку"
-        self.set_animation_steps(self.bars_widget.original_values.copy())
+        self.set_animation_steps()
 
         if hasattr(self, 'st_forward'):
             self.st_forward.disabled = False
@@ -231,7 +231,7 @@ class BarGraphApp(App):
         self.button_sort.text = "Запустить сортировку"
 
         self.anim_index *= 0
-        self.set_animation_steps(self.bars_widget.original_values.copy())
+        self.set_animation_steps()
 
 
 
