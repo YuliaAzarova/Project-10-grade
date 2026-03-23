@@ -120,6 +120,15 @@ class BarsWidget(Widget):
             bar2["color"].rgba = (0.3, 1, 0.3, 1)
             reset_i, reset_j = 0, len(self.bars)-1
 
+        elif sort == "Сортировка Шелла":
+            bar1 = self.bars[i]
+            bar2 = self.bars[j]
+            for k in range(0, len(self.bars), ind):
+                self.bars[k]["color"].rgba = (1, 0.3, 0.3, 1)
+            delta_time *= 3
+            bar1["color"].rgba = (0.3, 1, 0.3, 1)
+            bar2["color"].rgba = (0.3, 1, 0.3, 1)
+            reset_i, reset_j = 0, len(self.bars) - 1
 
         rect1 = bar1["rect"]
         rect2 = bar2["rect"]
@@ -153,7 +162,7 @@ class BarsWidget(Widget):
             return
 
         i, j = swaps[index][0], swaps[index][1]
-        if sort == "Сортировка расческой":
+        if sort == "Сортировка расческой" or sort == "Сортировка Шелла":
             duration = 0.5
             delta_time = 0.1
         if len(swaps[index]) == 4:

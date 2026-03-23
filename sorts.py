@@ -59,7 +59,7 @@ def merge_sort_steps(data):
 
 
 def quick_sort_steps(data):
-    arr = data.copy()
+    data = data.copy()
     steps = []
 
     def quick_sort(low, high):
@@ -67,16 +67,16 @@ def quick_sort_steps(data):
             return
 
         pi_ind = high
-        pivot = arr[pi_ind]
+        pivot = data[pi_ind]
         i = low - 1
 
         for j in range(low, high):
-            if arr[j] <= pivot:
+            if data[j] <= pivot:
                 i += 1
                 if i != j:
                     for k in range(j, i, -1):
                         steps.append((k - 1, k, pi_ind))
-                        arr[k - 1], arr[k] = arr[k], arr[k - 1]
+                        data[k - 1],data[k] = data[k], data[k - 1]
 
                         if k == pi_ind:
                             pi_ind = k - 1
@@ -87,7 +87,7 @@ def quick_sort_steps(data):
         if pi_ind > pi:
             for k in range(high, i + 1, -1):
                 steps.append((k - 1, k, pi_ind))
-                arr[k - 1], arr[k] = arr[k], arr[k - 1]
+                data[k - 1], data[k] = data[k], data[k - 1]
                 if k == pi_ind:
                     pi_ind = k - 1
                 elif k - 1 == pi_ind:
@@ -96,7 +96,7 @@ def quick_sort_steps(data):
         quick_sort(low, i)
         quick_sort(i + 2, high)
 
-    quick_sort(0, len(arr) - 1)
+    quick_sort(0, len(data) - 1)
     return steps
 
 
@@ -140,7 +140,9 @@ def comb_sort_steps(data):
 
 
 
-def shell_sort(data):
+def shell_sort_steps(data):
+    data = data.copy()
+    steps = []
     n = len(data)
     gap = n // 2
     while gap > 0:
@@ -149,7 +151,8 @@ def shell_sort(data):
             j = i
             while j >= gap and data[j - gap] > temp:
                 data[j] = data[j - gap]
+                steps.append((j, j - gap, gap))
                 j -= gap
             data[j] = temp
         gap //= 2
-    return data
+    return steps
