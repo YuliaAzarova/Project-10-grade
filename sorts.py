@@ -116,27 +116,40 @@ def select_sort_steps(data):
 
 
 def comb_sort_steps(data):
-    gap = len(data)
-    shrink = 1.247
-    finish = False
+    n = len(data)
     steps = []
+    gap = n
+    factor = 1.247
+    sorting = True
 
-    while not finish:
-        gap = int(gap / shrink)
-
+    while sorting:
+        gap = int(gap / factor)
         if gap <= 1:
             gap = 1
-            finish = True
+            sorting = False
 
-        i = 0
-        while i + gap < len(data):
+        for i in range(0, n - gap):
             if data[i] > data[i + gap]:
                 data[i], data[i + gap] = data[i + gap], data[i]
-                for j in range(i, i + gap):
-                    steps.append((j, j + 1, i + gap))
-                for j in range(i + gap - 1, i, -1):
-                    steps.append((j, j - 1, i + gap))
-                finish = False
-            i += 1
-
+                steps.append((i, i + gap, gap))
+                sorting = True
     return steps
+
+
+
+
+
+
+def shell_sort(data):
+    n = len(data)
+    gap = n // 2
+    while gap > 0:
+        for i in range(gap, n):
+            temp = data[i]
+            j = i
+            while j >= gap and data[j - gap] > temp:
+                data[j] = data[j - gap]
+                j -= gap
+            data[j] = temp
+        gap //= 2
+    return data
