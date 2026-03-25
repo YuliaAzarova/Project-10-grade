@@ -170,3 +170,19 @@ def shaker_sort_steps(data):
                 data[j], data[j - 1] = data[j - 1], data[j]
                 steps.append((j, j - 1, 1))
     return steps
+
+
+def gnome_sort_steps(data):
+    data = data.copy()
+    steps = []
+    n = len(data)
+    i = 0
+    while i < n - 1:
+        if data[i] <= data[i + 1]:
+            i += 1
+        else:
+            data[i], data[i + 1] = data[i + 1], data[i]
+            steps.append((i, i + 1))
+            if i != 0:
+                i -= 1
+    return steps

@@ -130,7 +130,7 @@ class BarsWidget(Widget):
             bar2["color"].rgba = (0.3, 1, 0.3, 1)
             reset_i, reset_j = 0, len(self.bars) - 1
 
-        if sort == "Сортировка шейкером":
+        elif sort == "Шейкерная сортировка":
             bar1 = self.bars[i]
             bar2 = self.bars[j]
             bar1["color"].rgba = (0.3, 1, 0.3, 1)
@@ -139,6 +139,17 @@ class BarsWidget(Widget):
                 reset_i, reset_j = i, j
             else:
                 reset_i, reset_j = j, i
+
+        elif sort == "Гномья сортировка":
+            if j > self.extra_ind:
+                self.extra_ind = j
+            bars = self.bars.copy()
+            for k in range( len(bars[:self.extra_ind]) + 1 ):
+                bars[k]["color"].rgba = (0.3, 1, 0.3, 1)
+            reset_i, reset_j = 0, len(bars)-1
+            bars[j]["color"].rgba = (1, 0.3, 0.3, 1)
+            bar1 = bars[i]
+            bar2 = bars[j]
 
         rect1 = bar1["rect"]
         rect2 = bar2["rect"]
