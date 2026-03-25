@@ -33,7 +33,8 @@ class BarGraphApp(App):
 
 
         self.spinner_values = ('Сортировка пузырьком', 'Сортировка слиянием', 'Сортировка вставками',
-                    'Быстрая сортировка', 'Сортировка выбором', 'Сортировка расческой', 'Сортировка Шелла')
+                    'Быстрая сортировка', 'Сортировка выбором', 'Сортировка расческой', 'Сортировка Шелла',
+                    'Сортировка шейкером')
         current_value = self.spinner_values[0]
 
         self.spinner = Spinner(
@@ -149,6 +150,8 @@ class BarGraphApp(App):
             self.animation_steps = sorts.comb_sort_steps(to_sort)
         elif self.status_label.text == "Сортировка Шелла":
             self.animation_steps = sorts.shell_sort_steps(to_sort)
+        elif self.status_label.text == "Сортировка шейкером":
+            self.animation_steps = sorts.shaker_sort_steps(to_sort)
 
 
     def on_spinner_select(self, spinner, value):

@@ -130,6 +130,16 @@ class BarsWidget(Widget):
             bar2["color"].rgba = (0.3, 1, 0.3, 1)
             reset_i, reset_j = 0, len(self.bars) - 1
 
+        if sort == "Сортировка шейкером":
+            bar1 = self.bars[i]
+            bar2 = self.bars[j]
+            bar1["color"].rgba = (0.3, 1, 0.3, 1)
+            bar2["color"].rgba = (1, 0.3, 0.3, 1)
+            if ind == 0:
+                reset_i, reset_j = i, j
+            else:
+                reset_i, reset_j = j, i
+
         rect1 = bar1["rect"]
         rect2 = bar2["rect"]
 

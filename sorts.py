@@ -136,10 +136,6 @@ def comb_sort_steps(data):
     return steps
 
 
-
-
-
-
 def shell_sort_steps(data):
     data = data.copy()
     steps = []
@@ -155,4 +151,22 @@ def shell_sort_steps(data):
                 j -= gap
             data[j] = temp
         gap //= 2
+    return steps
+
+
+def shaker_sort_steps(data):
+    data = data.copy()
+    steps = []
+    n = len(data)
+
+    for i in range(n//2):
+        for j in range(n - i - 1):
+            if data[j] > data[j + 1]:
+                data[j], data[j + 1] = data[j + 1], data[j]
+                steps.append((j, j + 1, 0))
+
+        for j in range(n - i - 2, i, -1):
+            if data[j] < data[j - 1]:
+                data[j], data[j - 1] = data[j - 1], data[j]
+                steps.append((j, j - 1, 1))
     return steps
