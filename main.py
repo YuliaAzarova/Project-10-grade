@@ -40,7 +40,7 @@ class BarGraphApp(App):
                                'Сортировка Шелла',
                                'Сортировка расческой',
                                'Случайная сортировка', )
-        self.speeds = {'Сортировка пузырьком': 'O(n^2)',
+        self.difficulties = {'Сортировка пузырьком': 'O(n^2)',
                        'Шейкерная сортировка': 'O(n^2)',
                        'Сортировка вставками': 'O(n^2)',
                        'Сортировка выбором': 'O(n^2)',
@@ -69,7 +69,7 @@ class BarGraphApp(App):
 
 
         self.status_label = Label(
-            text=f"Сложность сортировки: {self.speeds[self.spinner.text]}",
+            text=f"Сложность сортировки: {self.difficulties[self.spinner.text]}",
             size_hint=(1, None),
             height=100,
             font_size='25sp',
@@ -196,7 +196,7 @@ class BarGraphApp(App):
             self.animation_steps = ()
 
     def on_spinner_select(self, spinner, value):
-        self.status_label.text = f"Сложность сортировки: {self.speeds[value]}"
+        self.status_label.text = f"Сложность сортировки: {self.difficulties[value]}"
         spinner_values = []
         for i in range(0, len(self.spinner_values)):
             if self.spinner_values[i] != value:
