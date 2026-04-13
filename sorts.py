@@ -131,7 +131,7 @@ def comb_sort_steps(data):
         for i in range(0, n - gap):
             if data[i] > data[i + gap]:
                 data[i], data[i + gap] = data[i + gap], data[i]
-                steps.append((i, i + gap, gap))
+                steps.append((i, i + gap, gap, i % gap))
                 sorting = True
     return steps
 
@@ -186,3 +186,25 @@ def gnome_sort_steps(data):
             if i != 0:
                 i -= 1
     return steps
+
+
+def stalin_sort_steps(data):
+    data = data.copy()
+    steps = []
+    n = len(data)
+
+    for i in range(n - 1):
+        if data[i] > data[i + 1]:
+            for j in range(i + 1, n - 1):
+                data[j], data[j + 1] = data[j + 1], data[j]
+                steps.append((j, j + 1))
+    return data
+
+#Stalin Sort: Просто удаляет элементы, которые стоят не по порядку.
+# Массив становится отсортированным, но данных становится меньше.
+
+# Sleep Sort: Для каждого числа $n$ запускается поток,
+# который «спит» $n$ секунд и затем выводит это число.
+
+# Pancake Sort (Блинная сортировка): Единственная допустимая операция — разворот части массива
+# (как если бы мы переворачивали стопку блинов лопаткой).

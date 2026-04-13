@@ -1,4 +1,3 @@
-from pygments.styles.dracula import background
 from kivy.config import Config
 from kivy.graphics import Color, Rectangle
 Config.set('graphics', 'width', '450')
@@ -155,33 +154,24 @@ class BarGraphApp(App):
         else:
             to_sort = self.bars_widget.original_values.copy()
         if self.spinner.text == "Сортировка пузырьком":
-            self.button_shuffle.disabled = False
             self.animation_steps = sorts.bubble_sort_steps(to_sort)
         elif self.spinner.text == "Сортировка вставками":
-            self.button_shuffle.disabled = False
             self.animation_steps = sorts.insert_sort_steps(to_sort)
         elif self.spinner.text == "Сортировка слиянием":
-            self.button_shuffle.disabled = False
             self.animation_steps = sorts.merge_sort_steps(to_sort)
         elif self.spinner.text == "Быстрая сортировка":
-            self.button_shuffle.disabled = False
             self.animation_steps = sorts.quick_sort_steps(to_sort)
         elif self.spinner.text == "Сортировка выбором":
-            self.button_shuffle.disabled = False
             self.animation_steps = sorts.select_sort_steps(to_sort)
         elif self.spinner.text == "Сортировка расческой":
-            self.button_shuffle.disabled = False
             self.animation_steps = sorts.comb_sort_steps(to_sort)
         elif self.spinner.text == "Сортировка Шелла":
-            self.button_shuffle.disabled = False
             self.animation_steps = sorts.shell_sort_steps(to_sort)
         elif self.spinner.text == "Шейкерная сортировка":
-            self.button_shuffle.disabled = False
             self.animation_steps = sorts.shaker_sort_steps(to_sort)
         elif self.spinner.text == "Гномья сортировка":
-            self.button_shuffle.disabled = False
             self.animation_steps = sorts.gnome_sort_steps(to_sort)
-        elif self.spinner.text == "Случайная сортировка":
+        if self.spinner.text == "Случайная сортировка":
             new_data = self.bars_widget.values.copy()
             for i in range(len(new_data)):
                 new_data[i] = randint(0, 100)
@@ -194,6 +184,11 @@ class BarGraphApp(App):
                 self.st_forward.disabled = True
                 self.st_back.disabled = True
             self.animation_steps = ()
+        else:
+            self.button_shuffle.disabled = False
+            if hasattr(self, 'st_forward') and self.button_sort.text == "Запустить сортировку":
+                self.st_forward.disabled = False
+                self.st_back.disabled = True
 
     def on_spinner_select(self, spinner, value):
         self.status_label.text = f"Сложность сортировки: {self.difficulties[value]}"
