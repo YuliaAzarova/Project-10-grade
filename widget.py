@@ -68,6 +68,7 @@ class BarsWidget(Widget):
     def animation(self, i, j, sort, delta_time, left=None, right=None, ind=None, duration=None):
         if not duration:
             duration = self.duration
+
         if sort == "Сортировка пузырьком":
             bar1 = self.bars[i]
             bar2 = self.bars[j]
@@ -122,14 +123,17 @@ class BarsWidget(Widget):
             bar2["color"].rgba = (0.3, 1, 0.3, 1)
             reset_i, reset_j = 0, len(self.bars)-1
 
+
         elif sort == "Сортировка Шелла":
+            gap = ind
+            start_index = i % gap
+            for k in range(start_index, len(self.bars), gap):
+                self.bars[k]["color"].rgba = (1, 0.3, 0.3, 1)
             bar1 = self.bars[i]
             bar2 = self.bars[j]
-            for k in range(0, len(self.bars), ind):
-                self.bars[k]["color"].rgba = (1, 0.3, 0.3, 1)
-            delta_time *= 3
             bar1["color"].rgba = (0.3, 1, 0.3, 1)
             bar2["color"].rgba = (0.3, 1, 0.3, 1)
+            delta_time *= 3
             reset_i, reset_j = 0, len(self.bars) - 1
 
         elif sort == "Шейкерная сортировка":
@@ -154,6 +158,8 @@ class BarsWidget(Widget):
             bar1 = bars[i]
             bar2 = bars[j]
 
+        total_step_time = duration + delta_time
+
         rect1 = bar1["rect"]
         rect2 = bar2["rect"]
 
@@ -169,9 +175,14 @@ class BarsWidget(Widget):
         anim1.start(rect1)
         anim2.start(rect2)
 
-        Clock.schedule_once(
-        lambda dt: self.reset_colors(reset_i, reset_j),
-            duration + delta_time)
+        if sort == "Сортировка Шелла" or sort == "Сортировка расческой":
+            Clock.schedule_once(
+            lambda dt: self.reset_colors(reset_i, reset_j),
+                total_step_time*1.65)
+        else:
+            Clock.schedule_once(
+                lambda dt: self.reset_colors(reset_i, reset_j),
+                total_step_time)
 
         self.bars[i], self.bars[j] = self.bars[j], self.bars[i]
         self.values[i], self.values[j] = self.values[j], self.values[i]
@@ -198,7 +209,7 @@ class BarsWidget(Widget):
 
         self.anim_event = Clock.schedule_once(
             lambda dt: self.animate(swaps, sort, index + 1),
-            duration+delta_time
+            duration + delta_time
         )
 
 
