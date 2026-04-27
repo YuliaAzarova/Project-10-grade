@@ -38,7 +38,8 @@ class BarGraphApp(App):
                                'Сортировка слиянием',
                                'Сортировка Шелла',
                                'Сортировка расческой',
-                               'Случайная сортировка', )
+                               'Случайная сортировка',
+                               'Блинная сортировка')
         self.difficulties = {'Сортировка пузырьком': 'O(n^2)',
                        'Шейкерная сортировка': 'O(n^2)',
                        'Сортировка вставками': 'O(n^2)',
@@ -48,7 +49,8 @@ class BarGraphApp(App):
                        'Сортировка слиянием': 'O(n log n)',
                        'Сортировка Шелла': 'O(n^(3/2))',
                        'Сортировка расческой': 'O(n log n)',
-                       'Случайная сортировка': 'O(0)'}
+                       'Случайная сортировка': 'O(0)',
+                        'Блинная сортировка': 'O(n^2)'}
         current_value = self.spinner_values[0]
 
         self.spinner = Spinner(
@@ -171,6 +173,8 @@ class BarGraphApp(App):
             self.animation_steps = sorts.shaker_sort_steps(to_sort)
         elif self.spinner.text == "Гномья сортировка":
             self.animation_steps = sorts.gnome_sort_steps(to_sort)
+        elif self.spinner.text == "Блинная сортировка":
+            self.animation_steps = sorts.pancake_sort_steps(to_sort)
         if self.spinner.text == "Случайная сортировка":
             new_data = self.bars_widget.values.copy()
             for i in range(len(new_data)):

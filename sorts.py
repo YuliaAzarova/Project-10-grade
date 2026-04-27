@@ -200,11 +200,35 @@ def stalin_sort_steps(data):
                 steps.append((j, j + 1))
     return data
 
+
+def pancake_sort_steps(data):
+    swaps = []
+    n = len(data)
+    curr_size = n
+
+    while curr_size > 1:
+        mi = data.index(max(data[:curr_size]))
+        if mi != curr_size - 1:
+            if mi != 0:
+                add_pancake_flip(swaps, data, mi)
+
+            add_pancake_flip(swaps, data, curr_size - 1)
+
+        curr_size -= 1
+    return swaps
+
+
+def add_pancake_flip(swaps, data, k):
+    left = 0
+    right = k
+    while left < right:
+        swaps.append((left, right, k))
+        data[left], data[right] = data[right], data[left]
+        left += 1
+        right -= 1
+
 #Stalin Sort: Просто удаляет элементы, которые стоят не по порядку.
 # Массив становится отсортированным, но данных становится меньше.
 
 # Sleep Sort: Для каждого числа $n$ запускается поток,
 # который «спит» $n$ секунд и затем выводит это число.
-
-# Pancake Sort (Блинная сортировка): Единственная допустимая операция — разворот части массива
-# (как если бы мы переворачивали стопку блинов лопаткой).
