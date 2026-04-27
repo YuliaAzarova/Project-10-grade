@@ -187,10 +187,14 @@ class BarsWidget(Widget):
         anim1.start(rect1)
         anim2.start(rect2)
 
-        if sort == "Сортировка Шелла" or sort == "Сортировка расческой" or sort == "Блинная сортировка":
+        if sort == "Сортировка Шелла" or sort == "Сортировка расческой":
             Clock.schedule_once(
             lambda dt: self.reset_colors(reset_i, reset_j),
                 total_step_time*1.65)
+        elif sort == "Блинная сортировка":
+            Clock.schedule_once(
+                lambda dt: self.reset_colors(reset_i, reset_j),
+                total_step_time * 1.25)
         else:
             Clock.schedule_once(
                 lambda dt: self.reset_colors(reset_i, reset_j),
@@ -209,9 +213,12 @@ class BarsWidget(Widget):
             return
 
         i, j = swaps[index][0], swaps[index][1]
-        if sort == "Сортировка расческой" or sort == "Сортировка Шелла" or sort == "Блинная сортировка":
+        if sort == "Сортировка расческой" or sort == "Сортировка Шелла":
             duration = 1
             delta_time = 0.5
+        elif sort == "Блинная сортировка":
+            duration = 0.5
+            delta_time = 0.3
         if len(swaps[index]) == 4:
             self.animation(i, j, sort, delta_time=delta_time, left=swaps[index][2], right=swaps[index][3])
         elif len(swaps[index]) == 3:
