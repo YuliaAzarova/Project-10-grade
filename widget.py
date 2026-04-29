@@ -69,6 +69,12 @@ class BarsWidget(Widget):
         if not duration:
             duration = self.duration
 
+        current_delta = delta_time
+        if sort in ["Сортировка Шелла", "Сортировка расческой", "Шейкерная сортировка"]:
+            current_delta = delta_time * 3
+        elif sort == "Блинная сортировка":
+            current_delta = delta_time * 2
+
         if sort == "Сортировка пузырьком":
             bar1 = self.bars[i]
             bar2 = self.bars[j]
@@ -129,11 +135,9 @@ class BarsWidget(Widget):
             start_index = i % gap
             for k in range(start_index, len(self.bars), gap):
                 self.bars[k]["color"].rgba = (1, 0.3, 0.3, 1)
-            bar1 = self.bars[i]
-            bar2 = self.bars[j]
+            bar1, bar2 = self.bars[i], self.bars[j]
             bar1["color"].rgba = (0.3, 1, 0.3, 1)
             bar2["color"].rgba = (0.3, 1, 0.3, 1)
-            delta_time *= 3
             reset_i, reset_j = 0, len(self.bars) - 1
 
         elif sort == "Шейкерная сортировка":
@@ -159,18 +163,16 @@ class BarsWidget(Widget):
             bar2 = bars[j]
 
 
+
         elif sort == "Блинная сортировка":
-            bar1 = self.bars[i]
-            bar2 = self.bars[j]
-            for k in range(ind):
-                self.bars[k]["color"].rgba = (1, 0.8, 0.2, 1)
-            bar1["color"].rgba = (1, 0.3, 0.3, 1)
-
-            bar2["color"].rgba = (1, 0.3, 0.3, 1)
-
+            for k in range(ind + 1):
+                self.bars[k]["color"].rgba = (1, 0.3, 0.3, 1)
+            bar1, bar2 = self.bars[i], self.bars[j]
+            bar1["color"].rgba = (0.3, 1, 0.3, 1)
+            bar2["color"].rgba = (0.3, 1, 0.3, 1)
             reset_i, reset_j = 0, len(self.bars) - 1
 
-        total_step_time = duration + delta_time
+        total_step_time = duration + current_delta
 
         rect1 = bar1["rect"]
         rect2 = bar2["rect"]
@@ -187,18 +189,10 @@ class BarsWidget(Widget):
         anim1.start(rect1)
         anim2.start(rect2)
 
-        if sort == "Сортировка Шелла" or sort == "Сортировка расческой":
-            Clock.schedule_once(
+        Clock.schedule_once(
             lambda dt: self.reset_colors(reset_i, reset_j),
-                total_step_time*1.65)
-        elif sort == "Блинная сортировка":
-            Clock.schedule_once(
-                lambda dt: self.reset_colors(reset_i, reset_j),
-                total_step_time * 1.25)
-        else:
-            Clock.schedule_once(
-                lambda dt: self.reset_colors(reset_i, reset_j),
-                total_step_time)
+            total_step_time
+        )
 
         self.bars[i], self.bars[j] = self.bars[j], self.bars[i]
         self.values[i], self.values[j] = self.values[j], self.values[i]
@@ -206,29 +200,38 @@ class BarsWidget(Widget):
         self.busy = True
 
     def animate(self, swaps, sort, index=0, duration=0.3, delta_time=0.03):
-        if not self.animating:
+        if not self.animating or index >= len(swaps):
+            if index >= len(swaps):
+                self.animating = False
             return
 
-        if index == len(swaps):
-            return
+        current_duration = duration
+        current_delta = delta_time
 
-        i, j = swaps[index][0], swaps[index][1]
-        if sort == "Сортировка расческой" or sort == "Сортировка Шелла":
-            duration = 1
-            delta_time = 0.5
+        if sort in ["Сортировка расческой", "Сортировка Шелла"]:
+            current_duration = 0.7
+            current_delta = 0.5
+            next_call_delay = current_duration + (current_delta * 3)
         elif sort == "Блинная сортировка":
-            duration = 0.5
-            delta_time = 0.3
-        if len(swaps[index]) == 4:
-            self.animation(i, j, sort, delta_time=delta_time, left=swaps[index][2], right=swaps[index][3])
-        elif len(swaps[index]) == 3:
-            self.animation(i, j, sort, delta_time=delta_time, ind=swaps[index][2])
+            current_duration = 0.5
+            current_delta = 0.3
+            next_call_delay = current_duration + (current_delta * 2)
         else:
-            self.animation(i, j, sort, delta_time=delta_time)
+            next_call_delay = current_duration + current_delta
+
+        swap = swaps[index]
+        i, j = swap[0], swap[1]
+
+        if len(swap) == 4:
+            self.animation(i, j, sort, current_delta, left=swap[2], right=swap[3], duration=current_duration)
+        elif len(swap) == 3:
+            self.animation(i, j, sort, current_delta, ind=swap[2], duration=current_duration)
+        else:
+            self.animation(i, j, sort, current_delta, duration=current_duration)
 
         self.anim_event = Clock.schedule_once(
-            lambda dt: self.animate(swaps, sort, index + 1),
-            duration + delta_time
+            lambda dt: self.animate(swaps, sort, index + 1, duration, delta_time),
+            next_call_delay
         )
 
 
