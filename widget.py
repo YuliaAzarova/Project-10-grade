@@ -2,6 +2,7 @@ from kivy.uix.widget import Widget
 from kivy.graphics import Rectangle, Color
 from kivy.animation import Animation
 from kivy.clock import Clock
+from kivy.app import App
 
 
 class BarsWidget(Widget):
@@ -162,8 +163,6 @@ class BarsWidget(Widget):
             bar1 = bars[i]
             bar2 = bars[j]
 
-
-
         elif sort == "Блинная сортировка":
             for k in range(ind + 1):
                 self.bars[k]["color"].rgba = (1, 0.3, 0.3, 1)
@@ -186,17 +185,17 @@ class BarsWidget(Widget):
         anim1 = Animation(pos=(x2, y1), duration=duration)
         anim2 = Animation(pos=(x1, y2), duration=duration)
 
+        self.bars[i], self.bars[j] = self.bars[j], self.bars[i]
+        self.values[i], self.values[j] = self.values[j], self.values[i]
+        def finish_step(*args):
+            self.busy = False
+        anim1.bind(on_complete=finish_step)
+
         anim1.start(rect1)
         anim2.start(rect2)
 
-        Clock.schedule_once(
-            lambda dt: self.reset_colors(reset_i, reset_j),
-            total_step_time
-        )
-
-        self.bars[i], self.bars[j] = self.bars[j], self.bars[i]
-        self.values[i], self.values[j] = self.values[j], self.values[i]
-        Clock.schedule_once(lambda dt: setattr(self, "busy", False), duration)
+        Clock.schedule_once(lambda dt: self.reset_colors(reset_i, reset_j), total_step_time)
+        # Clock.schedule_once(lambda dt: setattr(self, "busy", False), duration)
         self.busy = True
 
     def animate(self, swaps, sort, index=0, duration=0.3, delta_time=0.03):
@@ -205,6 +204,7 @@ class BarsWidget(Widget):
                 self.animating = False
             return
 
+        App.anim_index = index
         current_duration = duration
         current_delta = delta_time
 
@@ -234,6 +234,11 @@ class BarsWidget(Widget):
             next_call_delay
         )
 
+    def stop(self):
+        self.animating = False
+        if self.anim_event:
+            self.anim_event.cancel()
+            self.anim_event = None
 
     def reset(self):
         self.extra_ind = 0

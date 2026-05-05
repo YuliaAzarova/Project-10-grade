@@ -98,7 +98,7 @@ class BarGraphApp(App):
         buttons_layout = BoxLayout(
             orientation='vertical',
             spacing=20, size_hint_y=2)
-
+        sort_layout = BoxLayout(orientation='horizontal', spacing=20)
         self.button_sort = Button(text='Запустить сортировку',
                         font_size='15sp',
                         size_hint=(1, None),
@@ -106,14 +106,24 @@ class BarGraphApp(App):
                         font_name=self.font,
                         background_normal='',
                         background_color=(0.02, 0.50, 0.85, 1))
+        self.button_reset_sort = Button(text="Сбрость сортировку",
+                        disabled=True,
+                        font_size='15sp',
+                        size_hint=(1, None),
+                        on_press=self.on_press_reset_sort,
+                        font_name=self.font,
+                        background_normal='',
+                        background_color=(0.02, 0.50, 0.85, 1))
+        sort_layout.add_widget(self.button_sort)
+        sort_layout.add_widget(self.button_reset_sort)
         self.button_shuffle = Button(text='Перемешать',
                         font_size='15sp',
                         size_hint=(1, None),
                         on_press=self.on_press_shuffle,
                         font_name=self.font,
                         background_normal='',
-                        background_color=(0.02, 0.50, 0.85, 1))
-        buttons_layout.add_widget(self.button_sort)
+                        background_color=(0.02, 0.55, 0.80, 1))
+        buttons_layout.add_widget(sort_layout)
         buttons_layout.add_widget(self.button_shuffle)
 
 
@@ -151,10 +161,9 @@ class BarGraphApp(App):
         self.rect.size = instance.size
 
     def set_animation_steps(self):
-        if self.anim_index > 0:
-            to_sort = self.bars_widget.values.copy()
-        else:
-            to_sort = self.bars_widget.original_values.copy()
+        if self.anim_index > 0 and self.animation_steps:
+            return
+        to_sort = self.bars_widget.original_values.copy()
         if self.spinner.text == "Сортировка пузырьком":
             self.animation_steps = sorts.bubble_sort_steps(to_sort)
         elif self.spinner.text == "Сортировка вставками":
@@ -201,33 +210,43 @@ class BarGraphApp(App):
             if self.spinner_values[i] != value:
                 spinner_values.append(self.spinner_values[i])
         spinner.values = spinner_values
+        self.anim_index *= 0
 
         self.set_animation_steps()
 
 
     def on_press_sort(self, instance):
-        if instance.text == "Сбросить сортировку":
-            self.bars_widget.reset()
-            self.anim_index *= 0
-            self.set_animation_steps()
-
-            instance.text = "Запустить сортировку"
-
-
-            if hasattr(self, 'st_forward') and self.spinner.text != "Случайная сортировка":
+        if instance.text == "Остановить":
+            self.bars_widget.stop()
+            instance.text = "Продолжить"
+            if hasattr(self, 'st_forward'):
                 self.st_forward.disabled = False
-                self.st_back.disabled = True
+                self.st_back.disabled = False
             return
 
         self.bars_widget.animating = True
-
         self.set_animation_steps()
+        if not self.animation_steps:
+            return
 
-        self.bars_widget.animate(self.animation_steps, self.spinner.text)
-        instance.text = "Сбросить сортировку"
+        self.bars_widget.animate(self.animation_steps, self.spinner.text, self.anim_index)
+        instance.text = "Остановить"
+        self.button_reset_sort.disabled = False
         if hasattr(self, 'st_forward'):
             self.st_forward.disabled = True
             self.st_back.disabled = True
+
+    def on_press_reset_sort(self, instance):
+        self.bars_widget.reset()
+        self.anim_index *= 0
+        self.set_animation_steps()
+
+        self.button_sort.text = "Запустить сортировку"
+
+        if hasattr(self, 'st_forward') and self.spinner.text != "Случайная сортировка":
+            self.st_forward.disabled = False
+            self.st_back.disabled = True
+        instance.disabled = True
 
     def on_press_shuffle(self, instance):
         self.bars_widget.animating = False
@@ -249,9 +268,7 @@ class BarGraphApp(App):
 
 
     def on_press_steps(self, instance):
-        self.bars_widget.reset()
-        self.anim_index *= 0
-        self.bars_widget.animating = False
+        self.bars_widget.stop()
         self.steps_layout.clear_widgets()
 
         self.st_back = Button(text='Шаг назад',
@@ -260,7 +277,7 @@ class BarGraphApp(App):
                             on_press=self.on_press_s_back,
                             font_name=self.font,
                             background_normal='',
-                            background_color=(0.02, 0.42, 0.80, 1),
+                            background_color=(0.02, 0.60, 0.75, 1),
                             disabled=True)
         self.st_forward = Button(text='Шаг вперед',
                             font_size='15sp',
@@ -269,9 +286,9 @@ class BarGraphApp(App):
                             on_press=self.on_press_s_forward,
                             font_name=self.font,
                             background_normal='',
-                            background_color=(0.02, 0.42, 0.80, 1))
-        self.st_forward.disabled = False
-        self.st_back.disabled = True
+                            background_color=(0.02, 0.60, 0.75, 1))
+        self.st_forward.disabled = (self.anim_index >= len(self.animation_steps))
+        self.st_back.disabled = (self.anim_index <= 0)
 
 
         button_layout = BoxLayout(orientation='horizontal', spacing=20)
@@ -281,8 +298,6 @@ class BarGraphApp(App):
         self.steps_layout.add_widget(button_layout)
 
         self.button_sort.text = "Запустить сортировку"
-
-        self.anim_index *= 0
         self.set_animation_steps()
 
 
@@ -313,8 +328,8 @@ class BarGraphApp(App):
 
         if self.anim_index >= len(self.animation_steps):
             instance.disabled = True
-            self.button_sort.text = "Сбросить сортировку"
-            self.st_back.disabled = True
+            self.button_sort.text = "Запустить сортировку"
+            self.button_sort.disabled = True
             return
 
 
