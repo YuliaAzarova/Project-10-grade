@@ -222,6 +222,8 @@ class BarGraphApp(App):
             if hasattr(self, 'st_forward'):
                 self.st_forward.disabled = False
                 self.st_back.disabled = False
+            self.button_steps.disabled = False
+            self.anim_index += 1
             return
 
         self.bars_widget.animating = True
@@ -232,6 +234,7 @@ class BarGraphApp(App):
         self.bars_widget.animate(self.animation_steps, self.spinner.text, self.anim_index)
         instance.text = "Остановить"
         self.button_reset_sort.disabled = False
+        self.button_steps.disabled = True
         if hasattr(self, 'st_forward'):
             self.st_forward.disabled = True
             self.st_back.disabled = True
@@ -242,6 +245,7 @@ class BarGraphApp(App):
         self.set_animation_steps()
 
         self.button_sort.text = "Запустить сортировку"
+        self.button_sort.disabled = False
 
         if hasattr(self, 'st_forward') and self.spinner.text != "Случайная сортировка":
             self.st_forward.disabled = False
@@ -297,7 +301,6 @@ class BarGraphApp(App):
         button_layout.add_widget(self.st_forward)
         self.steps_layout.add_widget(button_layout)
 
-        self.button_sort.text = "Запустить сортировку"
         self.set_animation_steps()
 
 
@@ -312,7 +315,7 @@ class BarGraphApp(App):
 
         self.st_forward.disabled = False
         self.st_forward.text = "Шаг вперед"
-        self.button_sort.text = "Запустить сортировку"
+        self.button_sort.disabled = False
 
         if self.anim_index <= 0:
             instance.disabled = True

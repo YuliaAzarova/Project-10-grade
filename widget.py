@@ -63,7 +63,7 @@ class BarsWidget(Widget):
 
     def reset_colors(self, i, j):
         if i < len(self.bars) and j < len(self.bars):
-            for k in range(i, j+1):
+            for k in range(i, j + 1):
                 self.bars[k]["color"].rgba = (1, .5, 0, 1)
 
     def animation(self, i, j, sort, delta_time, left=None, right=None, ind=None, duration=None):
@@ -87,9 +87,9 @@ class BarsWidget(Widget):
             if j > self.extra_ind:
                 self.extra_ind = j
             bars = self.bars.copy()
-            for k in range( len(bars[:self.extra_ind]) + 1 ):
+            for k in range(len(bars[:self.extra_ind]) + 1):
                 bars[k]["color"].rgba = (0.3, 1, 0.3, 1)
-            reset_i, reset_j = 0, len(bars)-1
+            reset_i, reset_j = 0, len(bars) - 1
             bars[j]["color"].rgba = (1, 0.3, 0.3, 1)
             bar1 = bars[i]
             bar2 = bars[j]
@@ -100,7 +100,7 @@ class BarsWidget(Widget):
             bar1 = self.bars[i]
             bar2 = self.bars[j]
             bar2["color"].rgba = (0.3, 1, 0.3, 1)
-            reset_i, reset_j = 0, len(self.bars)-1
+            reset_i, reset_j = 0, len(self.bars) - 1
 
         elif sort == "Быстрая сортировка":
             bar1 = self.bars[i]
@@ -116,7 +116,7 @@ class BarsWidget(Widget):
             bar1 = self.bars[i]
             bar2 = self.bars[j]
             bar1["color"].rgba = (0.3, 1, 0.3, 1)
-            reset_i, reset_j = 0, len(self.bars)-1
+            reset_i, reset_j = 0, len(self.bars) - 1
 
         elif sort == "Сортировка расческой":
             bar1 = self.bars[i]
@@ -128,7 +128,7 @@ class BarsWidget(Widget):
             delta_time *= 3
             bar1["color"].rgba = (0.3, 1, 0.3, 1)
             bar2["color"].rgba = (0.3, 1, 0.3, 1)
-            reset_i, reset_j = 0, len(self.bars)-1
+            reset_i, reset_j = 0, len(self.bars) - 1
 
 
         elif sort == "Сортировка Шелла":
@@ -151,14 +151,13 @@ class BarsWidget(Widget):
                 reset_i, reset_j = i, j
             else:
                 reset_i, reset_j = j, i
-
         elif sort == "Гномья сортировка":
             if j > self.extra_ind:
                 self.extra_ind = j
             bars = self.bars.copy()
-            for k in range( len(bars[:self.extra_ind]) + 1 ):
+            for k in range(len(bars[:self.extra_ind]) + 1):
                 bars[k]["color"].rgba = (0.3, 1, 0.3, 1)
-            reset_i, reset_j = 0, len(bars)-1
+            reset_i, reset_j = 0, len(bars) - 1
             bars[j]["color"].rgba = (1, 0.3, 0.3, 1)
             bar1 = bars[i]
             bar2 = bars[j]
@@ -184,30 +183,36 @@ class BarsWidget(Widget):
 
         anim1 = Animation(pos=(x2, y1), duration=duration)
         anim2 = Animation(pos=(x1, y2), duration=duration)
-
         self.bars[i], self.bars[j] = self.bars[j], self.bars[i]
         self.values[i], self.values[j] = self.values[j], self.values[i]
+
         def finish_step(*args):
             self.busy = False
-        anim1.bind(on_complete=finish_step)
 
+        anim1.bind(on_complete=finish_step)
         anim1.start(rect1)
         anim2.start(rect2)
 
         Clock.schedule_once(lambda dt: self.reset_colors(reset_i, reset_j), total_step_time)
-        # Clock.schedule_once(lambda dt: setattr(self, "busy", False), duration)
         self.busy = True
 
     def animate(self, swaps, sort, index=0, duration=0.3, delta_time=0.03):
+        app = App.get_running_app()
         if not self.animating or index >= len(swaps):
             if index >= len(swaps):
                 self.animating = False
+                if app:
+                    app.button_sort.disabled = True
+                    app.button_steps.disabled = True
+                    if hasattr(app, "st_back"):
+                        app.st_back.disabled = True
+                        app.st_forward.disabled = True
             return
+        if app:
+            app.anim_index = index
 
-        App.anim_index = index
         current_duration = duration
         current_delta = delta_time
-
         if sort in ["Сортировка расческой", "Сортировка Шелла"]:
             current_duration = 0.7
             current_delta = 0.5
@@ -243,12 +248,10 @@ class BarsWidget(Widget):
     def reset(self):
         self.extra_ind = 0
         self.animating = False
+        self.stop()
 
-        if self.anim_event:
-            self.anim_event.cancel()
-            self.anim_event = None
+        for bar in self.bars:
+            Animation.cancel_all(bar["rect"])
 
-        for rect in self.bars:
-            Animation.cancel_all(rect["rect"])
         self.values = self.original_values.copy()
         self.draw_bars()
