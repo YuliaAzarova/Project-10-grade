@@ -88,7 +88,7 @@ class BarGraphApp(App):
             size_hint=(1, 1.9))
         self.data = []
         for i in range(10):
-            self.data.append(randint(0, 100))
+            self.data.append(randint(1, 50))
         self.bars_widget = BarsWidget(self.data)
         diagram_layout.add_widget(self.bars_widget)
         layout.add_widget(diagram_layout)
@@ -258,12 +258,13 @@ class BarGraphApp(App):
 
         new_data = self.bars_widget.values.copy()
         for i in range(len(new_data)):
-            new_data[i] = randint(0, 100)
+            new_data[i] = randint(1, 50)
         self.bars_widget.original_values = new_data.copy()
         self.bars_widget.values = new_data.copy()
 
         self.bars_widget.draw_bars()
         self.button_sort.text = "Запустить сортировку"
+        self.button_reset_sort.disabled = True
         self.set_animation_steps()
 
         if hasattr(self, 'st_forward'):
