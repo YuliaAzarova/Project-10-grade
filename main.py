@@ -187,12 +187,13 @@ class BarGraphApp(App):
         if self.spinner.text == "Случайная сортировка":
             new_data = self.bars_widget.values.copy()
             for i in range(len(new_data)):
-                new_data[i] = randint(0, 100)
+                new_data[i] = randint(1, 50)
             self.bars_widget.original_values = new_data.copy()
             self.bars_widget.values = new_data.copy()
 
             self.bars_widget.draw_bars()
             self.button_shuffle.disabled = True
+            self.button_steps.disabled = True
             if hasattr(self, 'st_forward'):
                 self.st_forward.disabled = True
                 self.st_back.disabled = True
