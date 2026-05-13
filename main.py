@@ -215,6 +215,14 @@ class BarGraphApp(App):
 
         self.set_animation_steps()
 
+        if value == "Случайная сортировка":
+            self.button_sort.text = "Запустить сортировку"
+            self.button_sort.disabled = False
+            self.button_reset_sort.disabled = True
+            self.button_steps.disabled = True
+        elif self.button_reset_sort.disabled:
+            self.button_steps.disabled = False
+
 
     def on_press_sort(self, instance):
         if instance.text == "Остановить":
@@ -247,6 +255,7 @@ class BarGraphApp(App):
 
         self.button_sort.text = "Запустить сортировку"
         self.button_sort.disabled = False
+        self.button_steps.disabled = False
 
         if hasattr(self, 'st_forward') and self.spinner.text != "Случайная сортировка":
             self.st_forward.disabled = False
@@ -267,6 +276,8 @@ class BarGraphApp(App):
         self.button_sort.text = "Запустить сортировку"
         self.button_reset_sort.disabled = True
         self.set_animation_steps()
+        self.button_sort.disabled = False
+        self.button_steps.disabled = False
 
         if hasattr(self, 'st_forward'):
             self.st_forward.disabled = False
